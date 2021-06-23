@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>用户仓库列表</title>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<!-- 所有的 css & js 资源 -->
+	<link rel="stylesheet" href="https://unpkg.com/element-ui@2.13.0/lib/theme-chalk/index.css">
+	<link rel="stylesheet" href="../../static/sa.css">
+	<script src="https://unpkg.com/vue@2.6.10/dist/vue.min.js"></script>
+	<script src="https://unpkg.com/element-ui@2.13.0/lib/index.js"></script>
+	<script src="https://unpkg.com/jquery@3.4.1/dist/jquery.min.js"></script>
+	<script src="https://www.layuicdn.com/layer-v3.1.1/layer.js"></script>
+	<script src="../../static/sa.js"></script>
+</head>
+
+<body>
+	<div class="vue-box" style="display: none;" :style="'display: block;'">
+		<div class="c-panel">
+			<!-- ------------- 检索参数 ------------- -->
+			<div class="c-title">用户仓库列表</div>
+			<el-form>
+				<div class="c-item">
+					<label class="c-label">SAP编号：</label>
+					<el-input size="mini" v-model="p.facilityInnerCode" placeholder="模糊查询"></el-input>
+				</div>
+				<div class="c-item">
+					<label class="c-label">仓库名称：</label>
+					<el-input size="mini" v-model="p.facilityName" placeholder="模糊查询"></el-input>
+				</div>
+				<div class="c-item" style="min-width: 0px;">
+					<el-button size="mini" type="primary" icon="el-icon-search" @click="f5()">查询</el-button>
+				</div>
+			</el-form>
+			<!-- <div class="c-title">数据列表</div> -->
+			<!-- ------------- 快捷按钮 ------------- -->
+			<div class="fast-btn">
+				<el-button size="mini" type="success" icon="el-icon-view" @click="getBySelect()">查看</el-button>
+				<el-button size="mini" type="success" icon="el-icon-view" @click="selectAll(true)">全选</el-button>
+				<el-button size="mini" type="success" icon="el-icon-view" @click="selectAll(false)">全不选</el-button>
+				<!-- <el-button size="mini" type="warning" icon="el-icon-download" @click="exportExcel()">导出</el-button> -->
+				<el-button size="mini" type="info" icon="el-icon-refresh" @click="sa.f5()">重置</el-button>
+			</div>
+			<!-- ------------- 数据列表 ------------- -->
+			<el-table class="data-table" ref="data-table" :data="dataList" size="small" stripe="true"
+				@select="rowSelectionChanged">
+				<el-table-column type="selection" width="45px"></el-table-column>
+				<el-table-column label="ID" prop="facilityId" width="80px"> </el-table-column>
+				<el-table-column label="仓库名称" prop="facilityName" width="160px">
+					<template slot-scope="s">
+						<div style="float: left; width: 130px; line-height: 20px;">
+							<b>{{s.row.facilityName}}</b>
+						</div>
+					</template>
+				</el-table-column>
+				<el-table-column label="SAP编号" prop="facilityInnerCode"> </el-table-column>
+				<el-table-column label="基地代码" prop="facilityCode"></el-table-column>
+				<el-table-column label="客户代码" prop="comCode"></el-table-column>
+				<el-table-column label="客户代码" prop="comName"></el-table-column>
+				<el-table-column prop="address" label="操作">
+					<template slot-scope="s">
+						<el-button class="c-btn" type="success" icon="el-icon-view" @click="get(s.row)">详情</el-button>
+					</template>
+				</el-table-column>
+			</el-table>
+			<!-- ------------- 分页 ------------- -->
+			<div class="page-box">
+				<el-pagination background layout="total, prev, pager, next, sizes, jumper" :current-page.sync="p.page"
+					:page-size.sync="p.limit" :total="totalCount" :page-sizes="[1, 10, 20, 30, 40, 50, 100]"
+					@current-change="f5(true)" @size-change="f5(true)">
+				</el-pagination>
+			</div>
+		</div>
+		<!-- 给layer打一波广告 -->
+		<!-- <div class="c-panel" style="background-color: rgba(0,0,0,0);">
+				layer：<el-link type="primary" href="http://layer.layui.com/" target="_blank">
+					一个可以让你想到即可做到的JavaScript弹窗（层）解决方案
+				</el-link>
+			</div> -->
+	</div>
+	<script type="text/javascript">
+		var app = new Vue({
+			el: '.vue-box',
+			data: {
+				p: { // 查询参数 
+					facilityInnerCode: '',
+					facilityName: '',
+					sidx: '',
+					order: '',
+					page: 1,
+					limit: 10,
+					userId: 0,
+				},
+				totalCount: 0,
+				dataList: []
+			},
+			methods: {
+				// 数据刷新
+				f5: function () {
+					sa.get('/local/facility/page', this.p, function (res) {
+						this.dataList = res.page.list; // 数据  
+						this.totalCount = res.page.totalCount; // 分页  
+						sa.f5TableHeight(); // 刷新表格高度
+						this.checkRows();
+					}.bind(this), {});
+
+				},
+				checkRows: function () {
+					sa.get('/local/link/facility/list?userId=' + this.p.userId, null, function (res) {
+						let list = res.list;
+						if (!list) return;
+						if (list[0] == '0') {
+							this.$refs['data-table'].toggleAllSelection();
+							return;
+						}
+						this.dataList.forEach((row, index) => {
+							let selected = list.includes(row.facilityId + "");
+							if (selected) {
+								this.$refs['data-table'].toggleRowSelection(this.dataList[index],
+									selected);
+							}
+						});
+					}.bind(this), {});
+				},
+				rowSelectionChanged: function (selectedRows, currRow) {
+					sa.post('/local/link/facility/save', {
+						userId: this.p.userId,
+						facilityId: currRow.facilityId
+					}, function (res) {
+						// this.f5();
+					}.bind(this));
+				},
+				selectAll: function (isChecked) {
+					sa.post('/local/link/facility/saveAll', {
+						userId: this.p.userId,
+						isChecked: isChecked
+					}, function (res) {
+						this.f5();
+					}.bind(this));
+				},
+				// 查看
+				get: function (data) {
+					// var str = '<div>';
+					// str += '<p>ID：' + data.userId + '</p>';
+					// str += '<p>账号：' + data.userName + '</p>';
+					// str += '<p>姓名：' + data.name + '</p>';
+					// str += '<p>身份：<b>' + data.role + '</b></p>';
+					// str += '</div>';
+					// sa.alert(str);
+					this.detail('仓库详情', data.facilityId, sa.CONSTANT.INFO, '/local/facility/info/' + data
+						.facilityId, false);
+				},
+				// 查看 - 根据选中的
+				getBySelect: function (data) {
+					var selection = this.$refs['data-table'].selection;
+					if (selection.length == 0) {
+						return sa.msg('请选择一条数据')
+					}
+					this.get(selection[0]);
+				},
+				detail: function (title, id, type, url, isReload) {
+					sa.showIframe(title, '../facility/facility-detail.html?facilityId=' + id + '&detailType=' +
+						type + '&url=' + url,
+						'420px',
+						'380px', false,
+						() => isReload && this.f5()
+					);
+				},
+				// 删除
+				del: function (data) {
+					let that = this;
+					sa.confirm('是否删除，此操作不可撤销', function () {
+						sa.post('/local/user/remove', [data.userId], function (res) {
+							// sa.arrayDelete(this.dataList, data);
+							sa.alert('删除成功', function (e) {
+								that.f5();
+							});
+						}.bind(this))
+					}.bind(this));
+				},
+				// 批量删除
+				deleteByIds: function () {
+					// 获取选中元素的id列表
+					let that = this;
+					let selection = this.$refs['data-table'].selection;
+					let ids = sa.getArrayField(selection, 'userId');
+					if (selection.length == 0) {
+						return sa.msg('请至少选择一条数据')
+					}
+					// 提交删除 
+					sa.confirm('是否批量删除选中数据？此操作不可撤销', function () {
+						sa.post('/local/user/remove', ids, function (res) {
+							sa.alert('删除成功', function (e) {
+								that.f5();
+							});
+						}.bind(this))
+					}.bind(this));
+				},
+				exportExcel: function () {
+
+				}
+			},
+			created: function () {
+				let temp = {};
+				try {
+					window.location.search.replace('?', '').split('&').forEach(obj => {
+						let item = obj.split('=');
+						if (item.length == 2) {
+							temp[item[0]] = item[1];
+						}
+					})
+				} catch (e) {
+
+				}
+				this.p.userId = temp.userId;
+				this.f5()
+				sa.onInputEnter(); // 监听输入框的回车事件，执行查询  
+			}
+		})
+	</script>
+
+
+
+
+
+
+</body>
+
+</html>

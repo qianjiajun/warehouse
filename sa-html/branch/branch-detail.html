@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>用户详情</title>
+	<title>分厂详情</title>
 	<meta charset="utf-8">
 	<meta name="viewport"
 		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
@@ -14,7 +14,6 @@
 	<script src="https://unpkg.com/jquery@3.4.1/dist/jquery.min.js"></script>
 	<script src="https://www.layuicdn.com/layer-v3.1.1/layer.js"></script>
 	<script src="../../static/sa.js"></script>
-	<script src="./data-list.js"></script>
 </head>
 
 <body>
@@ -25,17 +24,29 @@
 			<el-form v-if="m">
 				<div class="c-item br">
 					<label class="c-label">ID：</label>
-					<el-input size="mini" v-model="m.userId" :disabled="idDisabled || disabled"></el-input>
+					<el-input size="mini" v-model="m.facilityId" :disabled="idDisabled || disabled"></el-input>
 				</div>
 				<div class="c-item br">
-					<label class="c-label">账号：</label>
-					<el-input size="mini" v-model="m.userName" :disabled="disabled"></el-input>
+					<label class="c-label">仓库名称：</label>
+					<el-input size="mini" v-model="m.facilityName" :disabled="disabled"></el-input>
 				</div>
 				<div class="c-item br">
-					<label class="c-label">姓名：</label>
-					<el-input size="mini" v-model="m.name" :disabled="disabled"></el-input>
+					<label class="c-label">SAP编码：</label>
+					<el-input size="mini" v-model="m.facilityInnerCode" :disabled="disabled"></el-input>
 				</div>
 				<div class="c-item br">
+					<label class="c-label">基地代码：</label>
+					<el-input size="mini" v-model="m.facilityCode" :disabled="disabled"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">客户代码：</label>
+					<el-input size="mini" v-model="m.comCode" :disabled="disabled"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">客户名称：</label>
+					<el-input size="mini" v-model="m.comName" :disabled="disabled"></el-input>
+				</div>
+				<!-- <div class="c-item br">
 					<label class="c-label">身份：</label>
 					<el-select size="mini" v-model="m.role" @change="roleChanged" clearable placeholder="请选择"
 						:disabled="disabled">
@@ -43,7 +54,7 @@
 							:label="item.label">
 						</el-option>
 					</el-select>
-				</div>
+				</div> -->
 				<div class="c-item br">
 					<label class="c-label"></label>
 					<el-button size="mini" type="primary" icon="el-icon-plus" size="mini" @click="ok"
@@ -61,14 +72,15 @@
 				disabled: false,
 				idDisabled: true,
 				m: {
-					userId: '',
-					userName: '',
-					name: '',
-					role: '游客',
+					facilityId: '',
+					facilityName: '',
+					facilityInnerCode: '',
+					facilityCode: '',
+					comCode: '',
+					comName: '',
+					status: '0',
+					type: '0',
 				},
-				role: {
-					roleList: roleList
-				}
 			},
 
 			methods: {
@@ -83,18 +95,12 @@
 
 				},
 				roleChanged: function (value) {
-					// let itemList = this.role.roleList.filter(v => v.value == value);
-					// if (itemList) {
-					// 	this.m.role = itemList[0].label;
-					// } else {
-					// 	this.m.role = '';
-					// }
 				}
 			},
 			created: function () {
 				let temp = {
 					detailType: sa.CONSTANT.ADD,
-					url: '/local/user/save'
+					url: '/local/facility/save'
 				};
 				try {
 					window.location.search.replace('?', '').split('&').forEach(obj => {
@@ -111,8 +117,9 @@
 					this.disabled = false;
 					this.idDisabled = false;
 				} else {
-					sa.get('/local/user/info/' + this.param.userId, this.p, function (res) {
+					sa.get('/local/facility/info/' + this.param.facilityId, this.p, function (res) {
 						this.m = res.data;
+						console.log(res.data);
 						if (this.param.detailType === sa.CONSTANT.EDIT) {
 							this.disabled = false;
 							this.idDisabled = true;
