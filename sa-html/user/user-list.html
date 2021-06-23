@@ -48,7 +48,7 @@
 				<el-button size="mini" type="info" icon="el-icon-refresh" @click="sa.f5()">重置</el-button>
 			</div>
 			<!-- ------------- 数据列表 ------------- -->
-			<el-table class="data-table" ref="data-table" :data="dataList" size="small">
+			<el-table class="data-table" ref="data-table" :data="dataList" size="small" stripe="true">
 				<el-table-column type="selection" width="45px"></el-table-column>
 				<el-table-column label="ID" prop="userId" width="80px"> </el-table-column>
 				<el-table-column label="用户账号" prop="userName" width="160px">
@@ -65,6 +65,13 @@
 						<el-button class="c-btn" type="success" icon="el-icon-view" @click="get(s.row)">详情</el-button>
 						<el-button class="c-btn" type="warning" icon="el-icon-view" @click="edit(s.row)">编辑</el-button>
 						<el-button class="c-btn" type="danger" icon="el-icon-delete" @click="del(s.row)">删除</el-button>
+
+						<el-button class="c-btn" type="success" icon="el-icon-view" @click="facility(s.row)">仓库
+						</el-button>
+						<el-button class="c-btn" type="primary" icon="el-icon-view" @click="carrier(s.row)">承运商
+						</el-button>
+						<el-button class="c-btn" type="warning" icon="el-icon-view" @click="branch(s.row)">分厂
+						</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -140,6 +147,27 @@
 						'420px',
 						'380px', false,
 						() => isReload && this.f5()
+					);
+				},
+				facility: function (data) {
+					sa.showIframe('仓库权限', 'user-facility.html?userId=' + data.userId,
+						'70%',
+						'80%', false,
+						() => this.f5()
+					);
+				},
+				carrier: function (data) {
+					sa.showIframe('承运商权限', 'user-carrier.html?userId=' + data.userId,
+						'70%',
+						'80%', false,
+						() => this.f5()
+					);
+				},
+				branch: function (data) {
+					sa.showIframe('分厂权限', 'user-branch.html?userId=' + data.userId,
+						'70%',
+						'80%', false,
+						() => this.f5()
 					);
 				},
 				// 删除

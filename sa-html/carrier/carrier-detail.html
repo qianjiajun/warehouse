@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>承运商详情</title>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<!-- 所有的 css & js 资源 -->
+	<link rel="stylesheet" href="https://unpkg.com/element-ui@2.13.0/lib/theme-chalk/index.css">
+	<link rel="stylesheet" href="../../static/sa.css">
+	<script src="https://unpkg.com/vue@2.6.10/dist/vue.min.js"></script>
+	<script src="https://unpkg.com/element-ui@2.13.0/lib/index.js"></script>
+	<script src="https://unpkg.com/jquery@3.4.1/dist/jquery.min.js"></script>
+	<script src="https://www.layuicdn.com/layer-v3.1.1/layer.js"></script>
+	<script src="../../static/sa.js"></script>
+</head>
+
+<body>
+	<div class="vue-box" style="display: none;" :style="'display: block;'">
+		<!-- 参数栏 -->
+		<div class="c-panel">
+			<!-- <div class="c-title">用户添加</div> -->
+			<el-form v-if="m">
+				<div class="c-item br">
+					<label class="c-label">ID：</label>
+					<el-input size="mini" v-model="m.carrierId" :disabled="true"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">承运商名称：</label>
+					<el-input size="mini" v-model="m.companyName" :disabled="true"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">SAP编码：</label>
+					<el-input size="mini" v-model="m.sapCode" :disabled="true"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">物流公司ID：</label>
+					<el-input size="mini" v-model="m.logisticsCompanyId" :disabled="true"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">运输类型：</label>
+					<el-select size="mini" v-model="m.shipType" @change="shipTypeChanged" clearable placeholder="请选择"
+						:disabled="disabled">
+						<el-option v-for="item in shipTypeList" :key="item.value" :value="item.label"
+							:label="item.label">
+						</el-option>
+					</el-select>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">承运商类型：</label>
+					<el-select size="mini" v-model="m.carrierType" @change="carrierTypeChanged" clearable
+						placeholder="请选择" :disabled="disabled">
+						<el-option v-for="item in carrierTypeList" :key="item.value" :value="item.label"
+							:label="item.label">
+						</el-option>
+					</el-select>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">客户代码：</label>
+					<el-input size="mini" v-model="m.comCode" :disabled="disabled"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">客户名称：</label>
+					<el-input size="mini" v-model="m.comName" :disabled="disabled"></el-input>
+				</div>
+				<!-- <div class="c-item br">
+					<label class="c-label">身份：</label>
+					<el-select size="mini" v-model="m.role" @change="roleChanged" clearable placeholder="请选择"
+						:disabled="disabled">
+						<el-option v-for="item in role.roleList" :key="item.value" :value="item.label"
+							:label="item.label">
+						</el-option>
+					</el-select>
+				</div> -->
+				<div class="c-item br">
+					<label class="c-label"></label>
+					<el-button size="mini" type="primary" icon="el-icon-plus" size="mini" @click="ok"
+						:disabled="disabled">确定</el-button>
+				</div>
+			</el-form>
+		</div>
+	</div>
+	<script type="text/javascript">
+		new Vue({
+			el: '.vue-box',
+			data: {
+				param: {},
+				detailType: 'add', // add edit info
+				disabled: false,
+				idDisabled: true,
+				shipTypeList: [],
+				carrierTypeList: [],
+				m: {
+					carrierId: '',
+					companyName: '',
+					sapCode: '',
+					logisticsCompanyId: '',
+					shipType: '',
+					shipTypeName: '',
+					code: '',
+					name: '',
+					carrierType: '',
+					carrierTypeName: '',
+				},
+			},
+
+			methods: {
+				// ok
+				get: function () {
+					if (this.param.detailType === sa.CONSTANT.ADD) {
+						this.disabled = false;
+						this.idDisabled = false;
+					} else {
+						sa.get('/local/facility/info/' + this.param.carrierId, this.p, function (res) {
+							this.m = res.data;
+							if (this.param.detailType === sa.CONSTANT.EDIT) {
+								this.disabled = false;
+								this.idDisabled = true;
+							} else {
+								this.disabled = true;
+								this.idDisabled = true;
+							}
+						}.bind(this), {});
+					}
+				},
+				loadShipTypeList: function () {
+
+				},
+				loadCarrierTypeList: function () {
+
+				},
+				ok: function () {
+					sa.post(this.param.url, this.m, function (res) {
+						sa.alert(this.param.detailType === sa.CONSTANT.ADD ? '添加成功' : '修改成功',
+							function () {
+								sa.closeCurrIframe();
+							});
+					}.bind(this));
+
+				},
+				roleChanged: function (value) {}
+			},
+			created: function () {
+				let temp = {
+					detailType: sa.CONSTANT.ADD,
+					url: '/local/facility/save'
+				};
+				try {
+					window.location.search.replace('?', '').split('&').forEach(obj => {
+						let item = obj.split('=');
+						if (item.length == 2) {
+							temp[item[0]] = item[1];
+						}
+					})
+				} catch (e) {
+
+				}
+				this.param = temp;
+				this.get();
+				this.loadShipTypeList();
+				this.loadCarrierTypeList();
+
+			}
+		})
+	</script>
+</body>
+
+</html>
