@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>用户添加</title>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<!-- 所有的 css & js 资源 -->
+	<link rel="stylesheet" href="https://unpkg.com/element-ui@2.13.0/lib/theme-chalk/index.css">
+	<link rel="stylesheet" href="../../static/sa.css">
+	<script src="https://unpkg.com/vue@2.6.10/dist/vue.min.js"></script>
+	<script src="https://unpkg.com/element-ui@2.13.0/lib/index.js"></script>
+	<script src="https://unpkg.com/jquery@3.4.1/dist/jquery.min.js"></script>
+	<script src="https://www.layuicdn.com/layer-v3.1.1/layer.js"></script>
+	<script src="../../static/sa.js"></script>
+	<script src="./data-list.js"></script>
+</head>
+
+<body>
+	<div class="vue-box" style="display: none;" :style="'display: block;'">
+		<!-- 参数栏 -->
+		<div class="c-panel">
+			<!-- <div class="c-title">用户添加</div> -->
+			<el-form v-if="m">
+				<div class="c-item br">
+					<label class="c-label">ID：</label>
+					<el-input size="mini" v-model="m.userId" :disabled="idDisabled || disabled"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">账号：</label>
+					<el-input size="mini" v-model="m.userName" :disabled="disabled"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">姓名：</label>
+					<el-input size="mini" v-model="m.name" :disabled="disabled"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">身份：</label>
+					<el-select size="mini" v-model="m.role" @change="roleChanged" clearable placeholder="请选择"
+						:disabled="disabled">
+						<el-option v-for="item in role.roleList" :key="item.value" :value="item.label"
+							:label="item.label">
+						</el-option>
+					</el-select>
+				</div>
+				<div class="c-item br">
+					<label class="c-label"></label>
+					<el-button size="mini" type="primary" icon="el-icon-plus" size="mini" @click="ok"
+						:disabled="disabled">确定</el-button>
+				</div>
+			</el-form>
+		</div>
+	</div>
+	<script type="text/javascript">
+		new Vue({
+			el: '.vue-box',
+			data: {
+				param: {},
+				detailType: 'add', // add edit info
+				disabled: false,
+				idDisabled: true,
+				m: {
+					userId: '',
+					userName: '',
+					name: '',
+					role: '游客',
+				},
+				role: {
+					roleList: roleList
+				}
+			},
+
+			methods: {
+				// ok
+				ok: function () {
+					sa.post(this.param.url, this.m, function (res) {
+						sa.alert(this.param.detailType === sa.CONSTANT.ADD ? '添加成功' : '修改成功',
+							function () {
+								sa.closeCurrIframe();
+							});
+					}.bind(this));
+
+				},
+				roleChanged: function (value) {
+					// let itemList = this.role.roleList.filter(v => v.value == value);
+					// if (itemList) {
+					// 	this.m.role = itemList[0].label;
+					// } else {
+					// 	this.m.role = '';
+					// }
+				}
+			},
+			created: function () {
+				let temp = {
+					detailType: sa.CONSTANT.ADD,
+					url: '/local/user/save'
+				};
+				try {
+					window.location.search.replace('?', '').split('&').forEach(obj => {
+						let item = obj.split('=');
+						if (item.length == 2) {
+							temp[item[0]] = item[1];
+						}
+					})
+				} catch (e) {
+
+				}
+				this.param = temp;
+				if (this.param.detailType === sa.CONSTANT.ADD) {
+					this.disabled = false;
+					this.idDisabled = false;
+				} else {
+					sa.get('/local/user/info/' + this.param.userId, this.p, function (res) {
+						this.m = res.data;
+						if (this.param.detailType === sa.CONSTANT.EDIT) {
+							this.disabled = false;
+							this.idDisabled = true;
+						} else {
+							this.disabled = true;
+							this.idDisabled = true;
+						}
+					}.bind(this), {});
+				}
+			}
+		})
+	</script>
+</body>
+
+</html>
