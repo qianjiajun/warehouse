@@ -24,11 +24,35 @@
 			<el-form>
 				<div class="c-item">
 					<label class="c-label">SAP编号：</label>
-					<el-input size="mini" v-model="p.facilityInnerCode" placeholder="模糊查询"></el-input>
+					<el-input size="mini" v-model="p.sapCode" placeholder="模糊查询"></el-input>
 				</div>
 				<div class="c-item">
-					<label class="c-label">仓库名称：</label>
-					<el-input size="mini" v-model="p.facilityName" placeholder="模糊查询"></el-input>
+					<label class="c-label">承运商名称：</label>
+					<el-input size="mini" v-model="p.companyName" placeholder="模糊查询"></el-input>
+				</div>
+				<div class="c-item">
+					<label class="c-label">运输类型：</label>
+					<el-select size="mini" v-model="p.shipType" clearable placeholder="请选择">
+						<el-option v-for="item in shipTypeList" :key="item.code" :value="item.code"
+							:label="item.value">
+						</el-option>
+					</el-select>
+				</div>
+				<div class="c-item">
+					<label class="c-label">承运商类型：</label>
+					<el-select size="mini" v-model="p.carrierType" clearable placeholder="请选择">
+						<el-option v-for="item in carrierTypeList" :key="item.code" :value="item.code"
+							:label="item.value">
+						</el-option>
+					</el-select>
+				</div>
+				<div class="c-item">
+					<label class="c-label">结算方代码：</label>
+					<el-input size="mini" v-model="p.code" placeholder="模糊查询"></el-input>
+				</div>
+				<div class="c-item">
+					<label class="c-label">结算方名称：</label>
+					<el-input size="mini" v-model="p.name" placeholder="模糊查询"></el-input>
 				</div>
 				<div class="c-item" style="min-width: 0px;">
 					<el-button size="mini" type="primary" icon="el-icon-search" @click="f5()">查询</el-button>
@@ -38,8 +62,8 @@
 			<!-- ------------- 快捷按钮 ------------- -->
 			<div class="fast-btn">
 				<el-button size="mini" type="success" icon="el-icon-view" @click="getBySelect()">查看</el-button>
-				<el-button size="mini" type="success" icon="el-icon-view" @click="selectAll(true)">全选</el-button>
-				<el-button size="mini" type="success" icon="el-icon-view" @click="selectAll(false)">全不选</el-button>
+				<el-button size="mini" type="success" icon="el-icon-check" @click="selectAll(true)">全选</el-button>
+				<el-button size="mini" type="success" icon="el-icon-close" @click="selectAll(false)">全不选</el-button>
 				<!-- <el-button size="mini" type="warning" icon="el-icon-download" @click="exportExcel()">导出</el-button> -->
 				<el-button size="mini" type="info" icon="el-icon-refresh" @click="sa.f5()">重置</el-button>
 			</div>
@@ -48,17 +72,31 @@
 				@select="rowSelectionChanged">
 				<el-table-column type="selection" width="45px"></el-table-column>
 				<el-table-column label="ID" prop="carrierId" width="80px"> </el-table-column>
-				<el-table-column label="仓库名称" prop="facilityName" width="160px">
+				<el-table-column label="承运商名称" prop="companyName" width="160px">
 					<template slot-scope="s">
 						<div style="float: left; width: 130px; line-height: 20px;">
-							<b>{{s.row.facilityName}}</b>
+							<b>{{s.row.companyName}}</b>
 						</div>
 					</template>
 				</el-table-column>
-				<el-table-column label="SAP编号" prop="facilityInnerCode"> </el-table-column>
-				<el-table-column label="基地代码" prop="facilityCode"></el-table-column>
-				<el-table-column label="客户代码" prop="comCode"></el-table-column>
-				<el-table-column label="客户代码" prop="comName"></el-table-column>
+				<el-table-column label="SAP编号" prop="sapCode"> </el-table-column>
+				<el-table-column label="物流公司ID" prop="logisticsCompanyId"></el-table-column>
+				<el-table-column label="运输类型" prop="shipType">
+					<template slot-scope="s">
+						<div style="float: left; width: 130px; line-height: 20px;">
+							<b>{{s.row.shipTypeName}}</b>
+						</div>
+					</template>
+				</el-table-column>
+				<el-table-column label="承运商类型" prop="carrierType">
+					<template slot-scope="s">
+						<div style="float: left; width: 130px; line-height: 20px;">
+							<b>{{s.row.carrierTypeName}}</b>
+						</div>
+					</template>
+				</el-table-column>
+				<el-table-column label="结算方代码" prop="code"></el-table-column>
+				<el-table-column label="结算方名称" prop="name"></el-table-column>
 				<el-table-column prop="address" label="操作">
 					<template slot-scope="s">
 						<el-button class="c-btn" type="success" icon="el-icon-view" @click="get(s.row)">详情</el-button>
@@ -79,14 +117,20 @@
 			el: '.vue-box',
 			data: {
 				p: { // 查询参数 
-					facilityInnerCode: '',
-					facilityName: '',
+					sapCode: '',
+					companyName: '',
+					code: '',
+					name: '',
+					shipType: '',
+					carrierType: '',
 					sidx: '',
 					order: '',
 					page: 1,
 					limit: 10,
 					userId: 0,
 				},
+				shipTypeList: [],
+				carrierTypeList: [],
 				totalCount: 0,
 				dataList: []
 			},
@@ -134,6 +178,16 @@
 						this.f5();
 					}.bind(this));
 				},
+				loadShipTypeList: function () {
+					sa.get('/local/dict/list?type=shipType', {}, function (res) {
+						this.shipTypeList = res.list; // 数据  
+					}.bind(this), {});
+				},
+				loadCarrierTypeList: function () {
+					sa.get('/local/dict/list?type=carrierType', {}, function (res) {
+						this.carrierTypeList = res.list; // 数据  
+					}.bind(this), {});
+				},
 				// 查看
 				get: function (data) {
 					this.detail('承运商详情', data.carrierId, sa.CONSTANT.INFO, '/local/carrier/info/' + data
@@ -173,6 +227,8 @@
 				}
 				this.p.userId = temp.userId;
 				this.f5()
+				this.loadShipTypeList();
+				this.loadCarrierTypeList();
 				sa.onInputEnter(); // 监听输入框的回车事件，执行查询  
 			}
 		})

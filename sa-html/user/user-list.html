@@ -63,14 +63,14 @@
 				<el-table-column prop="address" label="操作">
 					<template slot-scope="s">
 						<el-button class="c-btn" type="success" icon="el-icon-view" @click="get(s.row)">详情</el-button>
-						<el-button class="c-btn" type="warning" icon="el-icon-view" @click="edit(s.row)">编辑</el-button>
+						<el-button class="c-btn" type="warning" icon="el-icon-edit" @click="edit(s.row)">编辑</el-button>
 						<el-button class="c-btn" type="danger" icon="el-icon-delete" @click="del(s.row)">删除</el-button>
 
-						<el-button class="c-btn" type="success" icon="el-icon-view" @click="facility(s.row)">仓库
+						<el-button class="c-btn" type="success" icon="el-icon-house" @click="facility(s.row)">仓库
 						</el-button>
-						<el-button class="c-btn" type="primary" icon="el-icon-view" @click="carrier(s.row)">承运商
+						<el-button class="c-btn" type="primary" icon="el-icon-ship" @click="carrier(s.row)">承运商
 						</el-button>
-						<el-button class="c-btn" type="warning" icon="el-icon-view" @click="branch(s.row)">分厂
+						<el-button class="c-btn" type="warning" icon="el-icon-share" @click="branch(s.row)">分厂
 						</el-button>
 					</template>
 				</el-table-column>

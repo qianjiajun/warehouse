@@ -20,7 +20,6 @@
 	<div class="vue-box" style="display: none;" :style="'display: block;'">
 		<!-- 参数栏 -->
 		<div class="c-panel">
-			<!-- <div class="c-title">用户添加</div> -->
 			<el-form v-if="m">
 				<div class="c-item br">
 					<label class="c-label">ID：</label>
@@ -31,7 +30,7 @@
 					<el-input size="mini" v-model="m.companyName" :disabled="true"></el-input>
 				</div>
 				<div class="c-item br">
-					<label class="c-label">SAP编码：</label>
+					<label class="c-label">SAP编号：</label>
 					<el-input size="mini" v-model="m.sapCode" :disabled="true"></el-input>
 				</div>
 				<div class="c-item br">
@@ -42,8 +41,8 @@
 					<label class="c-label">运输类型：</label>
 					<el-select size="mini" v-model="m.shipType" @change="shipTypeChanged" clearable placeholder="请选择"
 						:disabled="disabled">
-						<el-option v-for="item in shipTypeList" :key="item.value" :value="item.label"
-							:label="item.label">
+						<el-option v-for="item in shipTypeList" :key="item.code" :value="item.code"
+							:label="item.value">
 						</el-option>
 					</el-select>
 				</div>
@@ -51,28 +50,19 @@
 					<label class="c-label">承运商类型：</label>
 					<el-select size="mini" v-model="m.carrierType" @change="carrierTypeChanged" clearable
 						placeholder="请选择" :disabled="disabled">
-						<el-option v-for="item in carrierTypeList" :key="item.value" :value="item.label"
-							:label="item.label">
+						<el-option v-for="item in carrierTypeList" :key="item.code" :value="item.code"
+							:label="item.value">
 						</el-option>
 					</el-select>
 				</div>
 				<div class="c-item br">
-					<label class="c-label">客户代码：</label>
-					<el-input size="mini" v-model="m.comCode" :disabled="disabled"></el-input>
+					<label class="c-label">结算方代码：</label>
+					<el-input size="mini" v-model="m.code" :disabled="disabled"></el-input>
 				</div>
 				<div class="c-item br">
-					<label class="c-label">客户名称：</label>
-					<el-input size="mini" v-model="m.comName" :disabled="disabled"></el-input>
+					<label class="c-label">结算方名称：</label>
+					<el-input size="mini" v-model="m.name" :disabled="disabled"></el-input>
 				</div>
-				<!-- <div class="c-item br">
-					<label class="c-label">身份：</label>
-					<el-select size="mini" v-model="m.role" @change="roleChanged" clearable placeholder="请选择"
-						:disabled="disabled">
-						<el-option v-for="item in role.roleList" :key="item.value" :value="item.label"
-							:label="item.label">
-						</el-option>
-					</el-select>
-				</div> -->
 				<div class="c-item br">
 					<label class="c-label"></label>
 					<el-button size="mini" type="primary" icon="el-icon-plus" size="mini" @click="ok"
@@ -112,7 +102,7 @@
 						this.disabled = false;
 						this.idDisabled = false;
 					} else {
-						sa.get('/local/facility/info/' + this.param.carrierId, this.p, function (res) {
+						sa.get('/local/carrier/info/' + this.param.carrierId, this.p, function (res) {
 							this.m = res.data;
 							if (this.param.detailType === sa.CONSTANT.EDIT) {
 								this.disabled = false;
@@ -125,10 +115,14 @@
 					}
 				},
 				loadShipTypeList: function () {
-
+					sa.get('/local/dict/list?type=shipType', {}, function (res) {
+						this.shipTypeList = res.list; // 数据  
+					}.bind(this), {});
 				},
 				loadCarrierTypeList: function () {
-
+					sa.get('/local/dict/list?type=carrierType', {}, function (res) {
+						this.carrierTypeList = res.list; // 数据  
+					}.bind(this), {});
 				},
 				ok: function () {
 					sa.post(this.param.url, this.m, function (res) {
@@ -139,12 +133,17 @@
 					}.bind(this));
 
 				},
-				roleChanged: function (value) {}
+				shipTypeChanged: function (value, item) {
+					console.log(value, item);
+				},
+				carrierTypeChanged: function (value, item) {
+					console.log(value, item);
+				},
 			},
 			created: function () {
 				let temp = {
 					detailType: sa.CONSTANT.ADD,
-					url: '/local/facility/save'
+					url: '/local/carrier/save'
 				};
 				try {
 					window.location.search.replace('?', '').split('&').forEach(obj => {
@@ -157,10 +156,9 @@
 
 				}
 				this.param = temp;
-				this.get();
 				this.loadShipTypeList();
 				this.loadCarrierTypeList();
-
+				this.get();
 			}
 		})
 	</script>

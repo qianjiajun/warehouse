@@ -20,7 +20,6 @@
 	<div class="vue-box" style="display: none;" :style="'display: block;'">
 		<!-- 参数栏 -->
 		<div class="c-panel">
-			<!-- <div class="c-title">用户添加</div> -->
 			<el-form v-if="m">
 				<div class="c-item br">
 					<label class="c-label">ID：</label>
@@ -31,7 +30,7 @@
 					<el-input size="mini" v-model="m.facilityName" :disabled="disabled"></el-input>
 				</div>
 				<div class="c-item br">
-					<label class="c-label">SAP编码：</label>
+					<label class="c-label">SAP编号：</label>
 					<el-input size="mini" v-model="m.facilityInnerCode" :disabled="disabled"></el-input>
 				</div>
 				<div class="c-item br">
@@ -84,6 +83,24 @@
 			},
 
 			methods: {
+				get: function () {
+					if (this.param.detailType === sa.CONSTANT.ADD) {
+						this.disabled = false;
+						this.idDisabled = false;
+					} else {
+						sa.get('/local/facility/info/' + this.param.facilityId, this.p, function (res) {
+							this.m = res.data;
+							console.log(res.data);
+							if (this.param.detailType === sa.CONSTANT.EDIT) {
+								this.disabled = false;
+								this.idDisabled = true;
+							} else {
+								this.disabled = true;
+								this.idDisabled = true;
+							}
+						}.bind(this), {});
+					}
+				},
 				// ok
 				ok: function () {
 					sa.post(this.param.url, this.m, function (res) {
@@ -94,8 +111,7 @@
 					}.bind(this));
 
 				},
-				roleChanged: function (value) {
-				}
+				roleChanged: function (value) {}
 			},
 			created: function () {
 				let temp = {
@@ -113,22 +129,7 @@
 
 				}
 				this.param = temp;
-				if (this.param.detailType === sa.CONSTANT.ADD) {
-					this.disabled = false;
-					this.idDisabled = false;
-				} else {
-					sa.get('/local/facility/info/' + this.param.facilityId, this.p, function (res) {
-						this.m = res.data;
-						console.log(res.data);
-						if (this.param.detailType === sa.CONSTANT.EDIT) {
-							this.disabled = false;
-							this.idDisabled = true;
-						} else {
-							this.disabled = true;
-							this.idDisabled = true;
-						}
-					}.bind(this), {});
-				}
+				this.get();
 			}
 		})
 	</script>

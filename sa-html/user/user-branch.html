@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>用户仓库列表</title>
+	<title>用户分厂列表</title>
 	<meta charset="utf-8">
 	<meta name="viewport"
 		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
@@ -20,15 +20,11 @@
 	<div class="vue-box" style="display: none;" :style="'display: block;'">
 		<div class="c-panel">
 			<!-- ------------- 检索参数 ------------- -->
-			<div class="c-title">用户仓库列表</div>
+			<div class="c-title">用户分厂列表</div>
 			<el-form>
 				<div class="c-item">
-					<label class="c-label">SAP编号：</label>
-					<el-input size="mini" v-model="p.facilityInnerCode" placeholder="模糊查询"></el-input>
-				</div>
-				<div class="c-item">
-					<label class="c-label">仓库名称：</label>
-					<el-input size="mini" v-model="p.facilityName" placeholder="模糊查询"></el-input>
+					<label class="c-label">分厂名称</label>
+					<el-input size="mini" v-model="p.transferBranchName" placeholder="模糊查询"></el-input>
 				</div>
 				<div class="c-item" style="min-width: 0px;">
 					<el-button size="mini" type="primary" icon="el-icon-search" @click="f5()">查询</el-button>
@@ -38,8 +34,8 @@
 			<!-- ------------- 快捷按钮 ------------- -->
 			<div class="fast-btn">
 				<el-button size="mini" type="success" icon="el-icon-view" @click="getBySelect()">查看</el-button>
-				<el-button size="mini" type="success" icon="el-icon-view" @click="selectAll(true)">全选</el-button>
-				<el-button size="mini" type="success" icon="el-icon-view" @click="selectAll(false)">全不选</el-button>
+				<el-button size="mini" type="success" icon="el-icon-check" @click="selectAll(true)">全选</el-button>
+				<el-button size="mini" type="success" icon="el-icon-close" @click="selectAll(false)">全不选</el-button>
 				<!-- <el-button size="mini" type="warning" icon="el-icon-download" @click="exportExcel()">导出</el-button> -->
 				<el-button size="mini" type="info" icon="el-icon-refresh" @click="sa.f5()">重置</el-button>
 			</div>
@@ -47,18 +43,27 @@
 			<el-table class="data-table" ref="data-table" :data="dataList" size="small" stripe="true"
 				@select="rowSelectionChanged">
 				<el-table-column type="selection" width="45px"></el-table-column>
-				<el-table-column label="ID" prop="facilityId" width="80px"> </el-table-column>
-				<el-table-column label="仓库名称" prop="facilityName" width="160px">
+				<el-table-column label="ID" prop="transferBranchId" width="80px"> </el-table-column>
+				<el-table-column label="分厂名称" prop="transferBranchName" width="80px"></el-table-column>
+				<el-table-column label="分厂编号" prop="transferBranchCode"> </el-table-column>
+				<el-table-column label="分厂地址" prop="transferBranchAddress" width="160px"></el-table-column>
+				<el-table-column label="联系人" prop="contactPerson"></el-table-column>
+				<el-table-column label="联系电话" prop="contactMobile"></el-table-column>
+				<el-table-column label="省份" prop="provinceId">
 					<template slot-scope="s">
 						<div style="float: left; width: 130px; line-height: 20px;">
-							<b>{{s.row.facilityName}}</b>
+							<b>{{s.row.provinceName}}</b>
 						</div>
 					</template>
 				</el-table-column>
-				<el-table-column label="SAP编号" prop="facilityInnerCode"> </el-table-column>
-				<el-table-column label="基地代码" prop="facilityCode"></el-table-column>
-				<el-table-column label="客户代码" prop="comCode"></el-table-column>
-				<el-table-column label="客户代码" prop="comName"></el-table-column>
+				<el-table-column label="是否默认" prop="isDefault">
+					<template slot-scope="s">
+						<div style="float: left; width: 130px; line-height: 20px;">
+							<b>{{s.row.isDefaultText}}</b>
+						</div>
+					</template>
+				</el-table-column>
+				<el-table-column label="备注" prop="remark"></el-table-column>
 				<el-table-column prop="address" label="操作">
 					<template slot-scope="s">
 						<el-button class="c-btn" type="success" icon="el-icon-view" @click="get(s.row)">详情</el-button>
@@ -85,8 +90,7 @@
 			el: '.vue-box',
 			data: {
 				p: { // 查询参数 
-					facilityInnerCode: '',
-					facilityName: '',
+					transferBranchName: '',
 					sidx: '',
 					order: '',
 					page: 1,
@@ -99,7 +103,7 @@
 			methods: {
 				// 数据刷新
 				f5: function () {
-					sa.get('/local/facility/page', this.p, function (res) {
+					sa.get('/local/link/branch/page', this.p, function (res) {
 						this.dataList = res.page.list; // 数据  
 						this.totalCount = res.page.totalCount; // 分页  
 						sa.f5TableHeight(); // 刷新表格高度
@@ -108,7 +112,7 @@
 
 				},
 				checkRows: function () {
-					sa.get('/local/link/facility/list?userId=' + this.p.userId, null, function (res) {
+					sa.get('/local/link/branch/list?userId=' + this.p.userId, null, function (res) {
 						let list = res.list;
 						if (!list) return;
 						if (list[0] == '0') {
@@ -116,7 +120,7 @@
 							return;
 						}
 						this.dataList.forEach((row, index) => {
-							let selected = list.includes(row.facilityId + "");
+							let selected = list.includes(row.transferBranchId + "");
 							if (selected) {
 								this.$refs['data-table'].toggleRowSelection(this.dataList[index],
 									selected);
@@ -125,15 +129,15 @@
 					}.bind(this), {});
 				},
 				rowSelectionChanged: function (selectedRows, currRow) {
-					sa.post('/local/link/facility/save', {
+					sa.post('/local/link/branch/save', {
 						userId: this.p.userId,
-						facilityId: currRow.facilityId
+						branchId: currRow.transferBranchId
 					}, function (res) {
 						// this.f5();
 					}.bind(this));
 				},
 				selectAll: function (isChecked) {
-					sa.post('/local/link/facility/saveAll', {
+					sa.post('/local/link/branch/saveAll', {
 						userId: this.p.userId,
 						isChecked: isChecked
 					}, function (res) {
@@ -142,15 +146,8 @@
 				},
 				// 查看
 				get: function (data) {
-					// var str = '<div>';
-					// str += '<p>ID：' + data.userId + '</p>';
-					// str += '<p>账号：' + data.userName + '</p>';
-					// str += '<p>姓名：' + data.name + '</p>';
-					// str += '<p>身份：<b>' + data.role + '</b></p>';
-					// str += '</div>';
-					// sa.alert(str);
-					this.detail('仓库详情', data.facilityId, sa.CONSTANT.INFO, '/local/facility/info/' + data
-						.facilityId, false);
+					this.detail('分厂详情', data.transferBranchId, sa.CONSTANT.INFO, '/local/link/branch/info/' + data
+						.transferBranchId, false);
 				},
 				// 查看 - 根据选中的
 				getBySelect: function (data) {
@@ -161,7 +158,7 @@
 					this.get(selection[0]);
 				},
 				detail: function (title, id, type, url, isReload) {
-					sa.showIframe(title, '../facility/facility-detail.html?facilityId=' + id + '&detailType=' +
+					sa.showIframe(title, '../branch/branch-detail.html?branchId=' + id + '&detailType=' +
 						type + '&url=' + url,
 						'420px',
 						'380px', false,

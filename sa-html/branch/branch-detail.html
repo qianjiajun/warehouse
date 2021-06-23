@@ -20,41 +20,50 @@
 	<div class="vue-box" style="display: none;" :style="'display: block;'">
 		<!-- 参数栏 -->
 		<div class="c-panel">
-			<!-- <div class="c-title">用户添加</div> -->
 			<el-form v-if="m">
 				<div class="c-item br">
 					<label class="c-label">ID：</label>
-					<el-input size="mini" v-model="m.facilityId" :disabled="idDisabled || disabled"></el-input>
+					<el-input size="mini" v-model="m.transferBranchId" :disabled="idDisabled || disabled"></el-input>
 				</div>
 				<div class="c-item br">
 					<label class="c-label">仓库名称：</label>
-					<el-input size="mini" v-model="m.facilityName" :disabled="disabled"></el-input>
+					<el-input size="mini" v-model="m.transferBranchName" :disabled="disabled"></el-input>
 				</div>
 				<div class="c-item br">
-					<label class="c-label">SAP编码：</label>
-					<el-input size="mini" v-model="m.facilityInnerCode" :disabled="disabled"></el-input>
+					<label class="c-label">SAP编号：</label>
+					<el-input size="mini" v-model="m.transferBranchCode" :disabled="disabled"></el-input>
 				</div>
 				<div class="c-item br">
-					<label class="c-label">基地代码：</label>
-					<el-input size="mini" v-model="m.facilityCode" :disabled="disabled"></el-input>
+					<label class="c-label">地址：</label>
+					<el-input size="mini" v-model="m.transferBranchAddress" :disabled="disabled"></el-input>
 				</div>
 				<div class="c-item br">
-					<label class="c-label">客户代码：</label>
-					<el-input size="mini" v-model="m.comCode" :disabled="disabled"></el-input>
-				</div>
-				<div class="c-item br">
-					<label class="c-label">客户名称：</label>
-					<el-input size="mini" v-model="m.comName" :disabled="disabled"></el-input>
-				</div>
-				<!-- <div class="c-item br">
-					<label class="c-label">身份：</label>
-					<el-select size="mini" v-model="m.role" @change="roleChanged" clearable placeholder="请选择"
-						:disabled="disabled">
-						<el-option v-for="item in role.roleList" :key="item.value" :value="item.label"
-							:label="item.label">
+					<label class="c-label">省份：</label>
+					<el-select size="mini" v-model="m.provinceId" clearable placeholder="请选择" :disabled="disabled">
+						<el-option v-for="item in provinceList" :key="item.geoId" :value="item.geoId"
+							:label="item.geoName">
 						</el-option>
 					</el-select>
-				</div> -->
+				</div>
+				<div class="c-item br">
+					<label class="c-label">联系人：</label>
+					<el-input size="mini" v-model="m.contactPerson" :disabled="disabled"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">联系电话：</label>
+					<el-input size="mini" v-model="m.contactMobile" :disabled="disabled"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">是否默认：</label>
+					<el-switch v-model="m.isDefault" active-color="#13ce66" 
+						:disabled="disabled">
+						</el-input>
+						<!-- inactive-color="#ff4949" -->
+				</div>
+				<div class="c-item br">
+					<label class="c-label">备注：</label>
+					<el-input size="mini" v-model="m.remark" :disabled="disabled"></el-input>
+				</div>
 				<div class="c-item br">
 					<label class="c-label"></label>
 					<el-button size="mini" type="primary" icon="el-icon-plus" size="mini" @click="ok"
@@ -71,19 +80,41 @@
 				detailType: 'add', // add edit info
 				disabled: false,
 				idDisabled: true,
+				provinceList: [],
 				m: {
-					facilityId: '',
-					facilityName: '',
-					facilityInnerCode: '',
-					facilityCode: '',
-					comCode: '',
-					comName: '',
-					status: '0',
-					type: '0',
+					transferBranchId: '',
+					transferBranchName: '',
+					transferBranchCode: '',
+					transferBranchAddress: '',
+					provinceId: '',
+					provinceName: '',
+					contactPerson: '',
+					contactMobile: '',
+					isDefault: '0',
+					isDefaultText: '',
+					remark: '',
 				},
 			},
 
 			methods: {
+				get: function () {
+					if (this.param.detailType === sa.CONSTANT.ADD) {
+						this.disabled = false;
+						this.idDisabled = false;
+					} else {
+						sa.get('/local/link/branch/info/' + this.param.branchId, this.p, function (res) {
+							this.m = res.data;
+							console.log(res.data);
+							if (this.param.detailType === sa.CONSTANT.EDIT) {
+								this.disabled = false;
+								this.idDisabled = true;
+							} else {
+								this.disabled = true;
+								this.idDisabled = true;
+							}
+						}.bind(this), {});
+					}
+				},
 				// ok
 				ok: function () {
 					sa.post(this.param.url, this.m, function (res) {
@@ -94,13 +125,12 @@
 					}.bind(this));
 
 				},
-				roleChanged: function (value) {
-				}
+				roleChanged: function (value) {}
 			},
 			created: function () {
 				let temp = {
 					detailType: sa.CONSTANT.ADD,
-					url: '/local/facility/save'
+					url: '/local/link/branch/save'
 				};
 				try {
 					window.location.search.replace('?', '').split('&').forEach(obj => {
@@ -113,22 +143,7 @@
 
 				}
 				this.param = temp;
-				if (this.param.detailType === sa.CONSTANT.ADD) {
-					this.disabled = false;
-					this.idDisabled = false;
-				} else {
-					sa.get('/local/facility/info/' + this.param.facilityId, this.p, function (res) {
-						this.m = res.data;
-						console.log(res.data);
-						if (this.param.detailType === sa.CONSTANT.EDIT) {
-							this.disabled = false;
-							this.idDisabled = true;
-						} else {
-							this.disabled = true;
-							this.idDisabled = true;
-						}
-					}.bind(this), {});
-				}
+				this.get();
 			}
 		})
 	</script>
