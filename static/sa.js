@@ -9,18 +9,24 @@ var sa = {
 (function () {
 	// 公司开发环境
 	var cfg_dev = {
-		api_url: 'http://169.254.131.68:8081/warehouse', // 所有ajax请求接口父地址
-		web_url: 'http://www.baidu.com' // 此项目前台地址 (此配置项非必须)
+		api_url: 'http://127.0.0.1:8081/warehouse', // 所有ajax请求接口父地址
+		web_url: 'http://www.baidu.com', // 此项目前台地址 (此配置项非必须)
+		login_url: 'https://testenv.kellyone.com:5443/authmgt/sys/login', //登录地址
+		sys_id: 11 // 系统id
 	}
 	// 服务器测试环境
 	var cfg_test = {
 		api_url: 'http://api.warehouse.com',
-		web_url: 'http://www.baidu.com'
+		web_url: 'http://www.baidu.com',
+		login_url: 'https://testenv.kellyone.com:5443/authmgt/sys/login',
+		sys_id: 11
 	}
 	// 正式生产环境
 	var cfg_prod = {
 		api_url: 'http://www.baidu.com',
-		web_url: 'http://www.baidu.com'
+		web_url: 'http://www.baidu.com',
+		login_url: 'https://testenv.kellyone.com:5443/authmgt/sys/login',
+		sys_id: 11
 	}
 	sa.cfg = cfg_dev; // 最终环境 , 上线前请选择正确的环境 
 })();
@@ -112,17 +118,20 @@ var sa = {
 			sa.loading(cfg.msg);
 		}
 
+		let token = this.$sys && this.$sys.getToken();
+
 		let options = {
 			url: cfg.baseUrl + url,
 			type: cfg.type,
 			data: data,
 			// dataType: 'json',
-			xhrFields: {
-				withCredentials: true // 携带跨域cookie
-			},
+			// xhrFields: {
+			// 	withCredentials: false // 携带跨域cookie
+			// },
 			crossDomain: true,
 			beforeSend: function (xhr) {
 				xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+				xhr.setRequestHeader('token', token);
 			},
 			success: function (res) {
 				setTimeout(function () {
@@ -146,7 +155,7 @@ var sa = {
 			options.dataType = 'json';
 			options.contentType = 'application/json';
 		};
-
+		console.log(options);
 		// 开始请求ajax 
 		return $.ajax(options);
 
@@ -1188,6 +1197,10 @@ var sa = {
 		localStorage.setItem('currUser', JSON.stringify(currUser));
 	}
 
+	me.setUserInfo = function (currUserInfo) {
+		localStorage.setItem('currUserInfo', JSON.stringify(currUserInfo));
+	}
+
 	// 获得当前已登陆用户信息
 	me.getCurrUser = function () {
 		var user = localStorage.getItem("currUser");
@@ -1200,6 +1213,35 @@ var sa = {
 			user = JSON.parse(user);
 		}
 		return user;
+	}
+
+	/** 
+	 * 获得当前已登陆用户信息 
+	 * {
+	 * user: {},
+	 * permissions: [],
+	 * token: '',
+	 * expire: -1,
+	 * loginTime: new Date()
+	 * }
+	 */
+	me.getUserInfo = function () {
+		var userInfo = localStorage.getItem("currUserInfo");
+		if (userInfo == undefined || userInfo == null || userInfo == 'null' || userInfo == '' || userInfo == '{}' || userInfo.length < 10) {
+			userInfo = {
+				id: '0',
+				username: '未登录'
+			}
+		} else {
+			userInfo = JSON.parse(userInfo);
+		}
+		return userInfo;
+	}
+
+	// 获得当前已登陆用户信息
+	me.getToken = function () {
+		var userInfo = this.getUserInfo();
+		return userInfo.token;
 	}
 
 	// 如果未登录，则强制跳转到登录 
