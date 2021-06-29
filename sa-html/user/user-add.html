@@ -38,8 +38,7 @@
 				<div class="c-item br">
 					<label class="c-label">身份：</label>
 					<el-select size="mini" v-model="m.roleId" @change="roleChanged" clearable placeholder="请选择">
-						<el-option v-for="item in role.roleList" :key="item.value" :value="item.value"
-							:label="item.label">
+						<el-option v-for="item in roleList" :key="item.value" :value="item.value" :label="item.label">
 						</el-option>
 					</el-select>
 				</div>
@@ -61,9 +60,7 @@
 					roleId: 99,
 					role: '游客',
 				},
-				role: {
-					roleList: roleList
-				}
+				roleList: roleList
 			},
 			methods: {
 				// ok
@@ -73,11 +70,11 @@
 					}.bind(this));
 				},
 				roleChanged: function (value) {
-					let itemList = this.role.roleList.filter(v => v.value == value);
-					if (itemList) {
-						this.m.role = itemList[0].label;
+					const item = this.roleList.find(v => v.value == value + "");
+					if (item) {
+						this.m.name = item.label;
 					} else {
-						this.m.role = '';
+						this.m.name = '';
 					}
 				}
 			}

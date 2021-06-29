@@ -25,7 +25,7 @@ var menuList = [
 		id: '01',
 		name: '用户管理',
 		icon: 'el-icon-user',
-		info: '对用户列表、添加、统计等等...',
+		info: '对用户列表、添加等等...',
 		childList: [{
 				id: '01-01',
 				name: '用户列表',
@@ -42,26 +42,83 @@ var menuList = [
 	},
 	{
 		id: '02',
+		name: '仓库管理',
+		icon: 'el-icon-house',
+		info: '对仓库列表、添加等等...',
+		childList: [{
+				id: '02-01',
+				name: '仓库列表',
+				icon: 'el-icon-document-remove',
+				url: 'sa-html/facility/facility-list.html'
+			}
+		]
+	},
+	{
+		id: '03',
+		name: '承运商管理',
+		icon: 'el-icon-ship',
+		info: '对承运商列表、添加等等...',
+		childList: [{
+				id: '03-01',
+				name: '承运商列表',
+				icon: 'el-icon-document-remove',
+				url: 'sa-html/carrier/carrier-list.html'
+			}
+		]
+	},
+	{
+		id: '09',
+		name: '其他管理',
+		icon: 'el-icon-setting',
+		info: '对组织、流水号、智链系数、数据字典等等...',
+		childList: [{
+				id: '09-01',
+				name: '数据字典',
+				icon: 'el-icon-document-remove',
+				url: 'sa-html/settings/dict-list.html'
+			},
+			{
+				id: '09-02',
+				name: '组织列表',
+				icon: 'el-icon-document-remove',
+				url: 'sa-html/settings/dept-list.html'
+			},
+			{
+				id: '09-03',
+				name: '流水号列表',
+				icon: 'el-icon-document-remove',
+				url: 'sa-html/settings/serial-list.html'
+			},
+			{
+				id: '09-04',
+				name: '智链系数',
+				icon: 'el-icon-document-remove',
+				url: 'sa-html/settings/smart-list.html'
+			}
+		]
+	},
+	{
+		id: '98',
 		name: '各种示例',
 		icon: 'el-icon-search',
 		info: '增删改查各种常用组件示例',
 		childList: [{
-				id: '02-01',
+				id: '98-01',
 				name: '查询参数示例',
 				url: 'sa-html/case/query-p-case.html'
 			},
 			{
-				id: '02-02',
+				id: '98-02',
 				name: '表格显示示例',
 				url: 'sa-html/case/query-table-case.html'
 			},
 			{
-				id: '02-03',
+				id: '98-03',
 				name: '表单提交示例',
 				url: 'sa-html/case/submit-form.html'
 			},
 			{
-				id: '02-11',
+				id: '98-11',
 				name: '在线表单构建',
 				url: 'https://mrhj.gitee.io/form-generator/#/'
 			},

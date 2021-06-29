@@ -155,7 +155,6 @@ var sa = {
 			options.dataType = 'json';
 			options.contentType = 'application/json';
 		};
-		console.log(options);
 		// 开始请求ajax 
 		return $.ajax(options);
 
@@ -232,9 +231,9 @@ var sa = {
 		sa.loading(cfg.msg);
 
 		// 打印请求地址和参数, 以便调试 
-		console.log("======= 模拟ajax =======");
-		console.log("请求地址：" + cfg.baseUrl + url);
-		console.log("请求参数：" + JSON.stringify(data));
+		// console.log("======= 模拟ajax =======");
+		// console.log("请求地址：" + cfg.baseUrl + url);
+		// console.log("请求参数：" + JSON.stringify(data));
 
 		// 模拟ajax的延时 
 		setTimeout(function () {
@@ -563,6 +562,38 @@ var sa = {
 				}
 			}
 		}
+		me.dateFormat = function (date, pattern) {
+			if (me.isNull(date) == true) {
+				return "";
+			}
+			if (me.isNull(pattern) == true) {
+				pattern = 'yyyy-MM-dd';
+			}
+			const o = {
+				"M+": date.getMonth() + 1, //月份 
+				"d+": date.getDate(), //日 
+				"h+": date.getHours(), //小时 
+				"m+": date.getMinutes(), //分 
+				"s+": date.getSeconds(), //秒 
+				"q+": Math.floor((date.getMonth() + 3) / 3), //季度 
+				"S": date.getMilliseconds() //毫秒 
+			};
+			if (/(y+)/.test(pattern)) {
+				pattern = pattern.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+			}
+			for (var k in o) {
+				if (new RegExp("(" + k + ")").test(pattern)) {
+					pattern = pattern.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+				}
+			}
+			return pattern;
+		};
+		me.dateFormat2 = function (timestamp, pattern) {
+			if (me.isNull(timestamp) == true) {
+				return "";
+			}
+			return me.dateFormat(new Date(timestamp), pattern);
+		};
 
 		// 将时间戳转化为指定时间
 		// way：方式（1=年月日，2=年月日时分秒）默认1,  也可以指定格式：yyyy-MM-dd HH:mm:ss  
@@ -790,6 +821,26 @@ var sa = {
 		// 打开页面
 		me.open = function (url) {
 			window.open(url);
+		}
+
+		me.selectVisibleChange = function (visible, ref, method) {
+			if (visible) {
+				let popper = ref.$refs.popper;
+				if (popper.$el) popper = popper.$el;
+				if (!Array.from(popper.children).some((v) => v.className === "el-template-menu__list")) {
+					const el = document.createElement("ul");
+					el.className = "el-template-menu__list";
+					el.style =
+						"border-top:2px solid rgb(219 225 241); padding:0; color:rgb(64 158 255);font-size: 13px";
+					el.innerHTML = `<li class="el-cascader-node text-center" style="height:37px;line-height: 50px;margin-left:10px;">
+	<span class="el-cascader-node__label"><i class="font-blue el-icon-plus"></i> 新增类型</span>
+	</li>`;
+					popper.appendChild(el);
+					el.onclick = () => {
+						method && method(visible, ref, el);
+					};
+				}
+			}
 		}
 
 

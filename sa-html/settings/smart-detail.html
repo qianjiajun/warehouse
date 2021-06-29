@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>分厂详情</title>
+	<title>智链系数详情</title>
 	<meta charset="utf-8">
 	<meta name="viewport"
 		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
@@ -22,46 +22,24 @@
 		<div class="c-panel">
 			<el-form v-if="m">
 				<div class="c-item br">
-					<label class="c-label">ID：</label>
-					<el-input size="mini" v-model="m.transferBranchId" :disabled="idDisabled || disabled"></el-input>
+					<label class="c-label">代码：</label>
+					<el-input size="mini" v-model="m.code" :disabled="idDisabled || disabled"></el-input>
 				</div>
 				<div class="c-item br">
-					<label class="c-label">仓库名称：</label>
-					<el-input size="mini" v-model="m.transferBranchName" :disabled="disabled"></el-input>
+					<label class="c-label">标题：</label>
+					<el-input size="mini" v-model="m.title" :disabled="disabled"></el-input>
 				</div>
 				<div class="c-item br">
-					<label class="c-label">SAP编号：</label>
-					<el-input size="mini" v-model="m.transferBranchCode" :disabled="disabled"></el-input>
+					<label class="c-label">固定加成比例：</label>
+					<el-input size="mini" v-model="m.percentage" :disabled="disabled"></el-input>
 				</div>
 				<div class="c-item br">
-					<label class="c-label">地址：</label>
-					<el-input size="mini" v-model="m.transferBranchAddress" :disabled="disabled"></el-input>
+					<label class="c-label">运费发票比例：</label>
+					<el-input size="mini" v-model="m.percentage1" :disabled="disabled"></el-input>
 				</div>
 				<div class="c-item br">
-					<label class="c-label">省份：</label>
-					<el-select size="mini" v-model="m.provinceId" clearable placeholder="请选择" :disabled="disabled">
-						<el-option v-for="item in provinceList" :key="item.geoId" :value="item.geoId"
-							:label="item.geoName">
-						</el-option>
-					</el-select>
-				</div>
-				<div class="c-item br">
-					<label class="c-label">联系人：</label>
-					<el-input size="mini" v-model="m.contactPerson" :disabled="disabled"></el-input>
-				</div>
-				<div class="c-item br">
-					<label class="c-label">联系电话：</label>
-					<el-input size="mini" v-model="m.contactMobile" :disabled="disabled"></el-input>
-				</div>
-				<div class="c-item br">
-					<label class="c-label">是否默认：</label>
-					<el-switch v-model="m.isDefault" active-color="#13ce66" 
-						:disabled="disabled">
-						<!-- inactive-color="#ff4949" -->
-				</div>
-				<div class="c-item br">
-					<label class="c-label">备注：</label>
-					<el-input size="mini" v-model="m.remark" :disabled="disabled"></el-input>
+					<label class="c-label">装卸费发票比例：</label>
+					<el-input size="mini" v-model="m.percentage2" :disabled="disabled"></el-input>
 				</div>
 				<div class="c-item br">
 					<label class="c-label"></label>
@@ -79,19 +57,15 @@
 				detailType: 'add', // add edit info
 				disabled: false,
 				idDisabled: true,
-				provinceList: [],
 				m: {
-					transferBranchId: '',
-					transferBranchName: '',
-					transferBranchCode: '',
-					transferBranchAddress: '',
-					provinceId: '',
-					provinceName: '',
-					contactPerson: '',
-					contactMobile: '',
-					isDefault: '0',
-					isDefaultText: '',
-					remark: '',
+					code: '',
+					title: '',
+					percentage: '',
+					percentage1: '',
+					percentage2: '',
+					fixPercentage: '',
+					freightPercentage1: '',
+					handingPercentage1: '',
 				},
 			},
 
@@ -101,7 +75,7 @@
 						this.disabled = false;
 						this.idDisabled = false;
 					} else {
-						sa.get('/local/link/branch/info/' + this.param.branchId, this.p, function (res) {
+						sa.get('/local/smartChain/percentage/info/' + this.param.code, this.p, function (res) {
 							this.m = res.data;
 							console.log(res.data);
 							if (this.param.detailType === sa.CONSTANT.EDIT) {
@@ -129,7 +103,7 @@
 			created: function () {
 				let temp = {
 					detailType: sa.CONSTANT.ADD,
-					url: '/local/link/branch/save'
+					url: '/local/smartChain/percentage/save'
 				};
 				try {
 					window.location.search.replace('?', '').split('&').forEach(obj => {

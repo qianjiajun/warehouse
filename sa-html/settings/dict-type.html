@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>数据字典类型</title>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<!-- 所有的 css & js 资源 -->
+	<link rel="stylesheet" href="../../static/kj/element-ui/theme-chalk/index.css">
+	<link rel="stylesheet" href="../../static/sa.css">
+	<script src="../../static/kj/vue.min.js"></script>
+	<script src="../../static/kj/element-ui/index.js"></script>
+	<script src="../../static/kj/jquery.min.js"></script>
+	<script src="../../static/kj/layer/layer.js"></script>
+	<script src="../../static/sa.js"></script>
+</head>
+
+<body>
+	<div class="vue-box" style="display: none;" :style="'display: block;'">
+		<!-- 参数栏 -->
+		<div class="c-panel">
+			<el-form v-if="m">
+				<div class="c-item br">
+					<label class="c-label">字典类型：</label>
+					<el-input size="mini" v-model="m.type" :disabled="false"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">类型名称：</label>
+					<el-input size="mini" v-model="m.name" :disabled="false"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label"></label>
+					<el-button size="mini" type="primary" icon="el-icon-plus" size="mini" @click="ok"
+						:disabled="disabled">确定</el-button>
+				</div>
+			</el-form>
+		</div>
+	</div>
+	<script type="text/javascript">
+		new Vue({
+			el: '.vue-box',
+			data: {
+				param: {
+					detailType: sa.CONSTANT.ADD,
+					url: '/local/dict/saveType'
+				},
+				detailType: 'add', // add edit info
+				disabled: false,
+				idDisabled: true,
+				def: {
+					id: '',
+					code: '1',
+					value: '无',
+					orderNum: 0,
+				},
+				m: {
+					type: '',
+					name: '',
+				},
+			},
+
+			methods: {
+				get: function () {
+					this.disabled = false;
+					this.idDisabled = false;
+				},
+				// ok
+				ok: function () {
+					console.log({
+						...this.m,
+						...this.def
+					});
+					sa.post(this.param.url, {
+						...this.m,
+						...this.def
+					}, function (res) {
+						sa.alert('添加成功', function () {
+							sa.closeCurrIframe();
+						});
+					}.bind(this));
+
+				},
+				roleChanged: function (value) {}
+			},
+			created: function () {
+				this.get();
+			}
+		})
+	</script>
+</body>
+
+</html>

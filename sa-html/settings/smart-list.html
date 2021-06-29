@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>智链系数</title>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<!-- 所有的 css & js 资源 -->
+	<link rel="stylesheet" href="../../static/kj/element-ui/theme-chalk/index.css">
+	<link rel="stylesheet" href="../../static/sa.css">
+	<script src="../../static/kj/vue.min.js"></script>
+	<script src="../../static/kj/element-ui/index.js"></script>
+	<script src="../../static/kj/jquery.min.js"></script>
+	<script src="../../static/kj/layer/layer.js"></script>
+	<script src="../../static/sa.js"></script>
+</head>
+
+<body>
+	<div class="vue-box" style="display: none;" :style="'display: block;'">
+		<div class="c-panel">
+			<!-- ------------- 检索参数 ------------- -->
+			<div class="c-title">智链系数</div>
+			<el-form>
+				<div class="c-item">
+					<label class="c-label">代码：</label>
+					<el-input size="mini" v-model="p.code" placeholder="模糊查询"></el-input>
+				</div>
+				<div class="c-item">
+					<label class="c-label">标题：</label>
+					<el-input size="mini" v-model="p.title" placeholder="模糊查询"></el-input>
+				</div>
+				<div class="c-item" style="min-width: 0px;">
+					<el-button size="mini" type="primary" icon="el-icon-search" @click="f5()">查询</el-button>
+				</div>
+			</el-form>
+			<!-- <div class="c-title">数据列表</div> -->
+			<!-- ------------- 快捷按钮 ------------- -->
+			<div class="fast-btn">
+				<el-button size="mini" type="success" icon="el-icon-view" @click="getBySelect()">查看</el-button>
+				<!-- <el-button size="mini" type="warning" icon="el-icon-download" @click="exportExcel()">导出</el-button> -->
+				<el-button size="mini" type="info" icon="el-icon-refresh" @click="sa.f5()">重置</el-button>
+			</div>
+			<!-- ------------- 数据列表 ------------- -->
+			<el-table class="data-table" ref="data-table" :data="dataList" size="small" stripe="true">
+				<el-table-column type="selection" width="45px"></el-table-column>
+				<el-table-column label="代码" prop="code" width="80px"></el-table-column>
+				<el-table-column label="标题" prop="title" with="160px"></el-table-column>
+				<el-table-column label="固定加成比例" prop="percentage" with="160px"></el-table-column>
+				<el-table-column label="运费加成比例" prop="percentage1" with="160px"></el-table-column>
+				<el-table-column label="装卸费加成比例" prop="percentage2" with="160px"></el-table-column>
+				<el-table-column prop="address" label="操作">
+					<template slot-scope="s">
+						<el-button class="c-btn" type="success" icon="el-icon-view" @click="get(s.row)">详情</el-button>
+						<el-button class="c-btn" type="warning" icon="el-icon-edit" @click="edit(s.row)">编辑</el-button>
+					</template>
+				</el-table-column>
+			</el-table>
+			<!-- ------------- 分页 ------------- -->
+			<div class="page-box">
+				<el-pagination background layout="total, prev, pager, next, sizes, jumper" :current-page.sync="p.page"
+					:page-size.sync="p.limit" :total="totalCount" :page-sizes="[1, 10, 20, 30, 40, 50, 100]"
+					@current-change="f5(true)" @size-change="f5(true)">
+				</el-pagination>
+			</div>
+		</div>
+		<!-- 给layer打一波广告 -->
+		<!-- <div class="c-panel" style="background-color: rgba(0,0,0,0);">
+				layer：<el-link type="primary" href="http://layer.layui.com/" target="_blank">
+					一个可以让你想到即可做到的JavaScript弹窗（层）解决方案
+				</el-link>
+			</div> -->
+	</div>
+	<script type="text/javascript">
+		var app = new Vue({
+			el: '.vue-box',
+			data: {
+				p: { // 查询参数 
+					code: '',
+					name: '',
+					sidx: '',
+					order: '',
+					page: 1,
+					limit: 10,
+				},
+				// roleList: roleList,
+				totalCount: 0,
+				dataList: []
+			},
+			methods: {
+				// 数据刷新
+				f5: function () {
+					sa.get('/local/smartChain/percentage/page', this.p, function (res) {
+						this.dataList = res.page.list; // 数据  
+						this.totalCount = res.page.totalCount; // 分页  
+						sa.f5TableHeight(); // 刷新表格高度 
+					}.bind(this), {});
+				},
+				// 查看
+				get: function (data) {
+					// var str = '<div>';
+					// str += '<p>ID：' + data.userId + '</p>';
+					// str += '<p>账号：' + data.userName + '</p>';
+					// str += '<p>姓名：' + data.name + '</p>';
+					// str += '<p>身份：<b>' + data.role + '</b></p>';
+					// str += '</div>';
+					// sa.alert(str);
+					this.detail('智链系数详情', data.code, sa.CONSTANT.INFO, '/local/smartChain/percentage/info/' +
+						data.facilityId, false);
+				},
+				// 查看 - 根据选中的
+				getBySelect: function (data) {
+					var selection = this.$refs['data-table'].selection;
+					if (selection.length == 0) {
+						return sa.msg('请选择一条数据')
+					}
+					this.get(selection[0]);
+				},
+				edit: function (data) {
+					this.detail('编辑智链系数', data.code, sa.CONSTANT.EDIT, '/local/smartChain/percentage/update',
+						true);
+				},
+				detail: function (title, id, type, url, isReload) {
+					sa.showIframe(title, 'smart-detail.html?code=' + id + '&detailType=' + type +
+						'&url=' + url,
+						'420px',
+						'400px', false,
+						() => isReload && this.f5()
+					);
+				},
+				exportExcel: function () {
+
+				}
+			},
+			created: function () {
+				this.f5()
+				sa.onInputEnter(); // 监听输入框的回车事件，执行查询  
+			}
+		})
+	</script>
+
+
+
+
+
+
+</body>
+
+</html>

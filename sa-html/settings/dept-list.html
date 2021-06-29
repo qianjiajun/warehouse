@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>用户列表</title>
+	<title>组织列表</title>
 	<meta charset="utf-8">
 	<meta name="viewport"
 		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
@@ -21,22 +21,31 @@
 	<div class="vue-box" style="display: none;" :style="'display: block;'">
 		<div class="c-panel">
 			<!-- ------------- 检索参数 ------------- -->
-			<div class="c-title">用户列表</div>
+			<div class="c-title">组织列表</div>
 			<el-form>
 				<div class="c-item">
-					<label class="c-label">用户账号：</label>
-					<el-input size="mini" v-model="p.userName" placeholder="模糊查询"></el-input>
+					<label class="c-label">组织代码：</label>
+					<el-input size="mini" v-model="p.code" placeholder="模糊查询"></el-input>
 				</div>
 				<div class="c-item">
-					<label class="c-label">用户名称：</label>
-					<el-input size="mini" v-model="p.name" placeholder="模糊查询"></el-input>
+					<label class="c-label">组织名称：</label>
+					<el-input size="mini" v-model="p.dept" placeholder="模糊查询"></el-input>
 				</div>
 				<div class="c-item">
-					<label class="c-label">用户身份：</label>
-					<el-select size="mini" v-model="p.role" clearable placeholder="请选择">
-						<el-option v-for="item in roleList" :key="item.value" :value="item.label" :label="item.label">
+					<label class="c-label">组织类型：</label>
+					<el-select size="mini" v-model="p.type" clearable placeholder="请选择">
+						<el-option v-for="item in deptTypeList" :key="item.value" :value="item.value"
+							:label="item.label">
 						</el-option>
 					</el-select>
+				</div>
+				<div class="c-item">
+					<label class="c-label">联系人：</label>
+					<el-input size="mini" v-model="p.contact" placeholder="模糊查询"></el-input>
+				</div>
+				<div class="c-item">
+					<label class="c-label">联系电话：</label>
+					<el-input size="mini" v-model="p.mobile" placeholder="模糊查询"></el-input>
 				</div>
 				<div class="c-item" style="min-width: 0px;">
 					<el-button size="mini" type="primary" icon="el-icon-search" @click="f5()">查询</el-button>
@@ -49,37 +58,30 @@
 				<el-button size="mini" type="success" icon="el-icon-view" @click="getBySelect()">查看</el-button>
 				<el-button size="mini" type="danger" icon="el-icon-delete" @click="deleteByIds()">删除</el-button>
 				<!-- <el-button size="mini" type="warning" icon="el-icon-download" @click="exportExcel()">导出</el-button> -->
-				<el-button size="mini" type="info" icon="el-icon-refresh" @click="test()">测试接口</el-button>
 				<el-button size="mini" type="info" icon="el-icon-refresh" @click="sa.f5()">重置</el-button>
 			</div>
 			<!-- ------------- 数据列表 ------------- -->
 			<el-table class="data-table" ref="data-table" :data="dataList" size="small" stripe="true">
 				<el-table-column type="selection" width="45px"></el-table-column>
-				<el-table-column label="ID" prop="userId" width="80px"> </el-table-column>
-				<el-table-column label="用户账号" prop="userName" width="160px">
+				<el-table-column label="ID" prop="id" width="80px"> </el-table-column>
+				<el-table-column label="组织名称" prop="dept" width="160px"></el-table-column>
+				<el-table-column label="组织代码" prop="code" with="160px"> </el-table-column>
+				<el-table-column label="联系人" prop="contact" with="120px"></el-table-column>
+				<el-table-column label="联系电话" prop="mobile" with="120px"></el-table-column>
+				<el-table-column label="组织类型" prop="type" with="160px" :formatter="getDeptTypeName">
+				</el-table-column>
+				<el-table-column label="是否启用" prop="isSelect" with="160px">
 					<template slot-scope="s">
 						<div style="float: left; width: 130px; line-height: 20px;">
-							<b>{{s.row.userName}}</b>
+							<b>{{s.row.isSelect?'是':''}}</b>
 						</div>
 					</template>
 				</el-table-column>
-				<el-table-column label="用户姓名" prop="name" with="160px"> </el-table-column>
-				<el-table-column label="用户身份" prop="role" with="120px"></el-table-column>
-				<el-table-column label="仓库" prop="facilityNames" with="160px"></el-table-column>
-				<el-table-column label="承运商" prop="carrierNames" with="160px"></el-table-column>
-				<el-table-column label="分厂" prop="branchNames" with="160px"></el-table-column>
 				<el-table-column prop="address" label="操作">
 					<template slot-scope="s">
 						<el-button class="c-btn" type="success" icon="el-icon-view" @click="get(s.row)">详情</el-button>
 						<el-button class="c-btn" type="warning" icon="el-icon-edit" @click="edit(s.row)">编辑</el-button>
 						<el-button class="c-btn" type="danger" icon="el-icon-delete" @click="del(s.row)">删除</el-button>
-
-						<el-button class="c-btn" type="success" icon="el-icon-house" @click="facility(s.row)">仓库
-						</el-button>
-						<el-button class="c-btn" type="primary" icon="el-icon-ship" @click="carrier(s.row)">承运商
-						</el-button>
-						<el-button class="c-btn" type="warning" icon="el-icon-share" @click="branch(s.row)">分厂
-						</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -103,33 +105,24 @@
 			el: '.vue-box',
 			data: {
 				p: { // 查询参数 
-					userName: '',
-					name: '',
-					role: '',
+					code: '',
+					dept: '',
+					type: '',
+					contact: '',
+					mobile: '',
 					sidx: '',
 					order: '',
 					page: 1,
 					limit: 10,
 				},
-				roleList: roleList,
+				deptTypeList: deptTypeList,
 				totalCount: 0,
 				dataList: []
 			},
 			methods: {
-				test: function () {
-					sa.get('/production/stock/materialdaily/page', {
-
-					}, function (res) {
-						console.log(res);
-						sa.alert(JSON.stringify(res));
-					}.bind(this), {});
-					// sa.post('/local/user/remove', [data.userId], function (res) {
-					// 	console.log(res);
-					// }.bind(this))
-				},
 				// 数据刷新
 				f5: function () {
-					sa.get('/local/user/page', this.p, function (res) {
+					sa.get('/local/dept/page', this.p, function (res) {
 						this.dataList = res.page.list; // 数据  
 						this.totalCount = res.page.totalCount; // 分页  
 						sa.f5TableHeight(); // 刷新表格高度 
@@ -137,14 +130,11 @@
 				},
 				// 查看
 				get: function (data) {
-					// var str = '<div>';
-					// str += '<p>ID：' + data.userId + '</p>';
-					// str += '<p>账号：' + data.userName + '</p>';
-					// str += '<p>姓名：' + data.name + '</p>';
-					// str += '<p>身份：<b>' + data.role + '</b></p>';
-					// str += '</div>';
-					// sa.alert(str);
-					this.detail('用户详情', data.userId, sa.CONSTANT.INFO, '/local/user/info/' + data.userId, false);
+					this.detail('部门详情', data.id, sa.CONSTANT.INFO, '/local/dept/info/' + data.id,
+						false);
+				},
+				getDeptTypeName: function (row, column, cellValue, index) {
+					return deptTypeList.find((item, index) => item.value == cellValue + "")?.label;
 				},
 				// 查看 - 根据选中的
 				getBySelect: function (data) {
@@ -156,46 +146,25 @@
 				},
 				// 新增
 				add: function (data) {
-					this.detail('新增用户', null, sa.CONSTANT.ADD, '/local/user/save', true);
+					this.detail('新增仓库', null, sa.CONSTANT.ADD, '/local/dept/save', true);
 					// this.sa_admin.showMenuById('01-02');
 				},
 				edit: function (data) {
-					this.detail('编辑用户', data.userId, sa.CONSTANT.EDIT, '/local/user/edit', true);
+					this.detail('编辑仓库', data.id, sa.CONSTANT.EDIT, '/local/dept/edit', true);
 				},
 				detail: function (title, id, type, url, isReload) {
-					sa.showIframe(title, 'user-detail.html?userId=' + id + '&detailType=' + type + '&url=' + url,
+					sa.showIframe(title, 'dept-detail.html?id=' + id + '&detailType=' + type + '&url=' +
+						url,
 						'420px',
 						'500px', false,
 						() => isReload && this.f5()
-					);
-				},
-				facility: function (data) {
-					sa.showIframe('仓库权限', 'user-facility.html?userId=' + data.userId,
-						'70%',
-						'80%', false,
-						() => this.f5()
-					);
-				},
-				carrier: function (data) {
-					sa.showIframe('承运商权限', 'user-carrier.html?userId=' + data.userId,
-						'70%',
-						'80%', false,
-						() => this.f5()
-					);
-				},
-				branch: function (data) {
-					sa.showIframe('分厂权限', 'user-branch.html?userId=' + data.userId,
-						'70%',
-						'80%', false,
-						() => this.f5()
 					);
 				},
 				// 删除
 				del: function (data) {
 					let that = this;
 					sa.confirm('是否删除，此操作不可撤销', function () {
-						sa.post('/local/user/remove', [data.userId], function (res) {
-							// sa.arrayDelete(this.dataList, data);
+						sa.post('/local/dept/remove', [data.id], function (res) {
 							sa.alert('删除成功', function (e) {
 								that.f5();
 							});
@@ -207,13 +176,13 @@
 					// 获取选中元素的id列表
 					let that = this;
 					let selection = this.$refs['data-table'].selection;
-					let ids = sa.getArrayField(selection, 'userId');
+					let ids = sa.getArrayField(selection, 'id');
 					if (selection.length == 0) {
 						return sa.msg('请至少选择一条数据')
 					}
 					// 提交删除 
 					sa.confirm('是否批量删除选中数据？此操作不可撤销', function () {
-						sa.post('/local/user/remove', ids, function (res) {
+						sa.post('/local/dept/remove', ids, function (res) {
 							sa.alert('删除成功', function (e) {
 								that.f5();
 							});

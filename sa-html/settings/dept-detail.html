@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>分厂详情</title>
+	<title>组织详情</title>
 	<meta charset="utf-8">
 	<meta name="viewport"
 		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
@@ -14,6 +14,7 @@
 	<script src="../../static/kj/jquery.min.js"></script>
 	<script src="../../static/kj/layer/layer.js"></script>
 	<script src="../../static/sa.js"></script>
+	<script src="./data-list.js"></script>
 </head>
 
 <body>
@@ -23,45 +24,35 @@
 			<el-form v-if="m">
 				<div class="c-item br">
 					<label class="c-label">ID：</label>
-					<el-input size="mini" v-model="m.transferBranchId" :disabled="idDisabled || disabled"></el-input>
+					<el-input size="mini" v-model="m.id" :disabled="true"></el-input>
 				</div>
 				<div class="c-item br">
-					<label class="c-label">仓库名称：</label>
-					<el-input size="mini" v-model="m.transferBranchName" :disabled="disabled"></el-input>
+					<label class="c-label">组织名称：</label>
+					<el-input size="mini" v-model="m.dept" :disabled="disabled"></el-input>
 				</div>
 				<div class="c-item br">
-					<label class="c-label">SAP编号：</label>
-					<el-input size="mini" v-model="m.transferBranchCode" :disabled="disabled"></el-input>
-				</div>
-				<div class="c-item br">
-					<label class="c-label">地址：</label>
-					<el-input size="mini" v-model="m.transferBranchAddress" :disabled="disabled"></el-input>
-				</div>
-				<div class="c-item br">
-					<label class="c-label">省份：</label>
-					<el-select size="mini" v-model="m.provinceId" clearable placeholder="请选择" :disabled="disabled">
-						<el-option v-for="item in provinceList" :key="item.geoId" :value="item.geoId"
-							:label="item.geoName">
-						</el-option>
-					</el-select>
+					<label class="c-label">组织代码：</label>
+					<el-input size="mini" v-model="m.code" :disabled="disabled"></el-input>
 				</div>
 				<div class="c-item br">
 					<label class="c-label">联系人：</label>
-					<el-input size="mini" v-model="m.contactPerson" :disabled="disabled"></el-input>
+					<el-input size="mini" v-model="m.contact" :disabled="disabled"></el-input>
 				</div>
 				<div class="c-item br">
 					<label class="c-label">联系电话：</label>
-					<el-input size="mini" v-model="m.contactMobile" :disabled="disabled"></el-input>
+					<el-input size="mini" v-model="m.mobile" :disabled="disabled"></el-input>
 				</div>
-				<div class="c-item br">
-					<label class="c-label">是否默认：</label>
-					<el-switch v-model="m.isDefault" active-color="#13ce66" 
-						:disabled="disabled">
-						<!-- inactive-color="#ff4949" -->
+				<div class="c-item">
+					<label class="c-label">组织类型：</label>
+					<el-select size="mini" v-model="m.type" clearable placeholder="请选择" :disabled="disabled">
+						<el-option v-for="item in deptTypeList" :key="item.value" :value="item.value"
+							:label="item.label">
+						</el-option>
+					</el-select>
 				</div>
-				<div class="c-item br">
-					<label class="c-label">备注：</label>
-					<el-input size="mini" v-model="m.remark" :disabled="disabled"></el-input>
+				<div class="c-item">
+					<label class="c-label">是否启用：</label>
+					<el-switch v-model="m.isSelect" active-color="#13ce66" :disabled="disabled">
 				</div>
 				<div class="c-item br">
 					<label class="c-label"></label>
@@ -79,19 +70,15 @@
 				detailType: 'add', // add edit info
 				disabled: false,
 				idDisabled: true,
-				provinceList: [],
+				deptTypeList: deptTypeList,
 				m: {
-					transferBranchId: '',
-					transferBranchName: '',
-					transferBranchCode: '',
-					transferBranchAddress: '',
-					provinceId: '',
-					provinceName: '',
-					contactPerson: '',
-					contactMobile: '',
-					isDefault: '0',
-					isDefaultText: '',
-					remark: '',
+					id: '',
+					dept: '',
+					code: '',
+					contact: '',
+					mobile: '',
+					type: '',
+					isSelect: '0',
 				},
 			},
 
@@ -101,9 +88,8 @@
 						this.disabled = false;
 						this.idDisabled = false;
 					} else {
-						sa.get('/local/link/branch/info/' + this.param.branchId, this.p, function (res) {
+						sa.get('/local/dept/info/' + this.param.id, this.p, function (res) {
 							this.m = res.data;
-							console.log(res.data);
 							if (this.param.detailType === sa.CONSTANT.EDIT) {
 								this.disabled = false;
 								this.idDisabled = true;
@@ -129,7 +115,7 @@
 			created: function () {
 				let temp = {
 					detailType: sa.CONSTANT.ADD,
-					url: '/local/link/branch/save'
+					url: '/local/dept/save'
 				};
 				try {
 					window.location.search.replace('?', '').split('&').forEach(obj => {

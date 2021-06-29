@@ -49,6 +49,10 @@ sa_admin.user = {
 	avatar: 'sa-resources/admin-logo.png'	// 头像地址  
 }
 
+if(sa.$sys) {
+	sa_admin.user.username = sa.$sys.getUserInfo().user.uname;
+}
+
 
 
 // ================================= 示例：设置登录后的头像处，下拉可以出现的选项  =================================

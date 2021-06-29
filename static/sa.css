@@ -134,7 +134,7 @@ input::-webkit-inner-spin-button {
 .c-item {min-width: 270px; min-height: 32px; line-height: 32px; padding-right: 10px; display: inline-block; margin: 0.5em 0;}
 .c-item.br{display: block; margin: 14px 0;}
 /* label样式 */
-.c-item .c-label{width: 6em; color: #333; padding-right: 4px; display: inline-block; text-align: right;}
+.c-item .c-label{width: 8em; color: #333; padding-right: 4px; display: inline-block; text-align: right;}
 /* input宽度等样式调整 */
 .c-item .el-input{width: 178px;}
 /* 禁用input的样式 */
