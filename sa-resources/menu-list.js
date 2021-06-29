@@ -104,21 +104,6 @@ var menuList = [
 		info: '增删改查各种常用组件示例',
 		childList: [{
 				id: '98-01',
-				name: '查询参数示例',
-				url: 'sa-html/case/query-p-case.html'
-			},
-			{
-				id: '98-02',
-				name: '表格显示示例',
-				url: 'sa-html/case/query-table-case.html'
-			},
-			{
-				id: '98-03',
-				name: '表单提交示例',
-				url: 'sa-html/case/submit-form.html'
-			},
-			{
-				id: '98-11',
 				name: '在线表单构建',
 				url: 'https://mrhj.gitee.io/form-generator/#/'
 			},
@@ -188,16 +173,6 @@ var menuList = [
 				url: 'http://www.jq22.com/demo/jQueryCss3D201710241004/'
 			}, // 原作者：https://www.jq22.com/jquery-info16495
 			{
-				id: '99-04',
-				name: 'canvas炫酷星空',
-				url: 'http://www.jq22.com/demo/warpDrive201712211120/index.html'
-			}, // 原作者：https://www.jq22.com/jquery-info17456
-			{
-				id: '99-05',
-				name: 'H5碰撞小球',
-				url: 'http://www.jq22.com/demo/html5Pzxq201712242209/'
-			}, // 原作者：https://www.jq22.com/jquery-info17482
-			{
 				id: '99-06',
 				name: '网页画板',
 				url: 'http://www.jq22.com/demo/Mapping201802252341/'
@@ -207,11 +182,6 @@ var menuList = [
 				name: '简约富文本编辑器',
 				url: 'http://www.jq22.com/demo/jquery-notebook-master/'
 			}, // 原作者：https://www.jq22.com/jquery-info345
-			{
-				id: '99-08',
-				name: '水滴特效',
-				url: 'http://www.jq22.com/demo/jquery-shuidi20151123/'
-			}, // 原作者：https://www.jq22.com/jquery-info4835
 			{
 				id: '99-09',
 				name: '图片放大',
@@ -227,11 +197,6 @@ var menuList = [
 				name: '3D选择图片',
 				url: 'http://www.jq22.com/demo/jquery-3d20150831/'
 			}, // 原作者：http://www.jq22.com/jquery-info4000
-			{
-				id: '99-12',
-				name: '蜘蛛纸牌',
-				url: 'http://www.jq22.com/demo/jqueryspider201809140137/'
-			}, // 原作者：http://www.jq22.com/jquery-info20047
 			{
 				id: '99-13',
 				name: '大转盘',
@@ -253,11 +218,6 @@ var menuList = [
 				url: 'http://www.jq22.com/demo/jQuery3dxk201710142249/'
 			}, // 原作者：http://www.jq22.com/jquery-info16294
 			{
-				id: '99-17',
-				name: '3d波浪墙',
-				url: 'http://www.jq22.com/demo/voxels-liquid201704112355/'
-			}, // 原作者：http://www.jq22.com/jquery-info13400
-			{
 				id: '99-18',
 				name: '元素周期表',
 				url: 'http://www.jq22.com/demo/jquery-3D20151113/'
@@ -278,11 +238,6 @@ var menuList = [
 				name: '3D粒子文字',
 				url: 'http://www.jq22.com/demo/3dwz201912102124/'
 			}, // 原作者：http://www.jq22.com/jquery-info22631
-			{
-				id: '99-22',
-				name: '多面立方体',
-				url: 'http://www.jq22.com/demo/threelft201905080117/'
-			}, // 原作者：http://www.jq22.com/demo/threelft201905080117/
 
 			{
 				id: '99-23',
@@ -290,21 +245,10 @@ var menuList = [
 				url: 'http://www.jq22.com/demo/jQueryColour202008050020/'
 			}, // 原作者：http://www.jq22.com/jquery-info23262
 			{
-				id: '99-24',
-				name: '音量调节',
-				url: 'http://www.jq22.com/demo/AdjustVolume202005122241/'
-			}, // 原作者：http://www.jq22.com/jquery-info23045
-			{
 				id: '99-25',
 				name: '重力下落',
 				url: 'http://www.jq22.com/demo/gamecaisse202005220040/'
 			}, // 原作者：http://www.jq22.com/jquery-info23074
-			{
-				id: '99-26',
-				name: '表情匹配',
-				url: 'http://www.jq22.com/demo/emojimatchgame201907170050/dist/'
-			}, // 原作者：http://www.jq22.com/jquery-info21952
-
 
 		]
 	},
