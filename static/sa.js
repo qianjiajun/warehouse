@@ -16,17 +16,17 @@ var sa = {
 	}
 	// 服务器测试环境
 	var cfg_test = {
-		api_url: 'http://api.warehouse.com',
+		api_url: 'http://10.254.8.40:8080/warehouse',
 		web_url: 'http://www.baidu.com',
 		login_url: 'https://testenv.kellyone.com:5443/authmgt/sys/login',
 		sys_id: 11
 	}
 	// 正式生产环境
 	var cfg_prod = {
-		api_url: 'http://www.baidu.com',
+		api_url: 'https://warehouseapi.kellyone.com',
 		web_url: 'http://www.baidu.com',
-		login_url: 'https://testenv.kellyone.com:5443/authmgt/sys/login',
-		sys_id: 11
+		login_url: 'https://auth.kellyone.com/sys/login',
+		sys_id: 10
 	}
 	sa.cfg = cfg_dev; // 最终环境 , 上线前请选择正确的环境 
 })();

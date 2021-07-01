@@ -49,7 +49,6 @@
 				<el-button size="mini" type="success" icon="el-icon-view" @click="getBySelect()">查看</el-button>
 				<el-button size="mini" type="danger" icon="el-icon-delete" @click="deleteByIds()">删除</el-button>
 				<!-- <el-button size="mini" type="warning" icon="el-icon-download" @click="exportExcel()">导出</el-button> -->
-				<el-button size="mini" type="info" icon="el-icon-refresh" @click="test()">测试接口</el-button>
 				<el-button size="mini" type="info" icon="el-icon-refresh" @click="sa.f5()">重置</el-button>
 			</div>
 			<!-- ------------- 数据列表 ------------- -->
@@ -116,17 +115,6 @@
 				dataList: []
 			},
 			methods: {
-				test: function () {
-					sa.get('/production/stock/materialdaily/page', {
-
-					}, function (res) {
-						console.log(res);
-						sa.alert(JSON.stringify(res));
-					}.bind(this), {});
-					// sa.post('/local/user/remove', [data.userId], function (res) {
-					// 	console.log(res);
-					// }.bind(this))
-				},
 				// 数据刷新
 				f5: function () {
 					sa.get('/local/user/page', this.p, function (res) {

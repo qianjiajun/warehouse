@@ -50,6 +50,7 @@ sa_admin.user = {
 }
 
 if(sa.$sys) {
+	sa.$sys.checkLogin("login.html");
 	sa_admin.user.username = sa.$sys.getUserInfo().user.uname;
 }
 
