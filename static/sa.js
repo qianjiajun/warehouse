@@ -832,7 +832,7 @@ var sa = {
 					el.className = "el-template-menu__list";
 					el.style =
 						"border-top:2px solid rgb(219 225 241); padding:0; color:rgb(64 158 255);font-size: 13px";
-					el.innerHTML = `<li class="el-cascader-node text-center" style="height:37px;line-height: 50px;margin-left:10px;">
+					el.innerHTML = `<li class="el-cascader-node text-center" style="height:37px;line-height: 50px;">
 	<span class="el-cascader-node__label"><i class="font-blue el-icon-plus"></i> 新增类型</span>
 	</li>`;
 					popper.appendChild(el);
