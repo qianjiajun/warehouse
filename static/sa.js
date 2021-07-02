@@ -823,7 +823,7 @@ var sa = {
 			window.open(url);
 		}
 
-		me.selectVisibleChange = function (visible, ref, method) {
+		me.selectVisibleChange = function (visible, ref, buttonName, method) {
 			if (visible) {
 				let popper = ref.$refs.popper;
 				if (popper.$el) popper = popper.$el;
@@ -833,7 +833,7 @@ var sa = {
 					el.style =
 						"border-top:2px solid rgb(219 225 241); padding:0; color:rgb(64 158 255);font-size: 13px";
 					el.innerHTML = `<li class="el-cascader-node text-center" style="height:37px;line-height: 50px;">
-	<span class="el-cascader-node__label"><i class="font-blue el-icon-plus"></i> 新增类型</span>
+	<span class="el-cascader-node__label"><i class="font-blue el-icon-plus"></i> ` + buttonName + `</span>
 	</li>`;
 					popper.appendChild(el);
 					el.onclick = () => {

@@ -112,7 +112,7 @@
 				},
 				visibleChange(visible, refName) {
 					const ref = this.$refs[refName];
-					sa.selectVisibleChange(visible, ref, () => {
+					sa.selectVisibleChange(visible, ref, "新增类型", () => {
 						this.addType();
 					})
 				},
