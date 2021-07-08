@@ -116,7 +116,17 @@
 			},
 			methods: {
 				// 数据刷新
+				test: function () {
+					sa.get('/production/plan/sales/page', {
+						orderDate: '2021-06'
+					}, function (res) {
+						let list = res.page.list || [];
+						list.push(res.page.sum || {});
+						console.table(list);
+					}.bind(this), {});
+				},
 				f5: function () {
+					this.test();
 					sa.get('/local/user/page', this.p, function (res) {
 						this.dataList = res.page.list; // 数据  
 						this.totalCount = res.page.totalCount; // 分页  

@@ -1297,7 +1297,7 @@ var sa = {
 
 	// 如果未登录，则强制跳转到登录 
 	me.checkLogin = function (not_login_url) {
-		console.log(me.getCurrUser());
+		// console.log(me.getCurrUser());
 		if (me.getCurrUser().id == 0) {
 			location.href = not_login_url || '../../login.html';
 			throw '未登录，请先登录';
