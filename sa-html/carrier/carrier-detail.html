@@ -75,8 +75,6 @@
 		new Vue({
 			el: '.vue-box',
 			data: {
-				param: {},
-				detailType: 'add', // add edit info
 				disabled: false,
 				idDisabled: true,
 				shipTypeList: [],
@@ -98,13 +96,13 @@
 			methods: {
 				// ok
 				get: function () {
-					if (this.param.detailType === sa.CONSTANT.ADD) {
+					if (this.temp.detailType === sa.CONSTANT.ADD) {
 						this.disabled = false;
 						this.idDisabled = false;
 					} else {
-						sa.get('/local/carrier/info/' + this.param.carrierId, this.p, function (res) {
+						sa.get('/local/carrier/info/' + this.temp.carrierId, this.p, function (res) {
 							this.m = res.data;
-							if (this.param.detailType === sa.CONSTANT.EDIT) {
+							if (this.temp.detailType === sa.CONSTANT.EDIT) {
 								this.disabled = false;
 								this.idDisabled = true;
 							} else {
@@ -125,8 +123,8 @@
 					}.bind(this), {});
 				},
 				ok: function () {
-					sa.post(this.param.url, this.m, function (res) {
-						sa.alert(this.param.detailType === sa.CONSTANT.ADD ? '添加成功' : '修改成功',
+					sa.post(this.temp.url, this.m, function (res) {
+						sa.alert(this.temp.detailType === sa.CONSTANT.ADD ? '添加成功' : '修改成功',
 							function () {
 								sa.closeCurrIframe();
 							});
@@ -141,21 +139,10 @@
 				},
 			},
 			created: function () {
-				let temp = {
+				sa.getParamsFromUrl(this, {
 					detailType: sa.CONSTANT.ADD,
 					url: '/local/carrier/save'
-				};
-				try {
-					window.location.search.replace('?', '').split('&').forEach(obj => {
-						let item = obj.split('=');
-						if (item.length == 2) {
-							temp[item[0]] = item[1];
-						}
-					})
-				} catch (e) {
-
-				}
-				this.param = temp;
+				});
 				this.loadShipTypeList();
 				this.loadCarrierTypeList();
 				this.get();

@@ -79,7 +79,6 @@
 					order: '',
 					page: 1,
 					limit: 10,
-					userId: 0,
 				},
 				totalCount: 0,
 				dataList: []
@@ -96,7 +95,7 @@
 
 				},
 				checkRows: function () {
-					sa.get('/local/link/facility/list?userId=' + this.p.userId, null, function (res) {
+					sa.get('/local/link/facility/list?userId=' + this.temp.userId, null, function (res) {
 						let list = res.list;
 						if (!list) return;
 						if (list[0] == '0') {
@@ -114,7 +113,7 @@
 				},
 				rowSelectionChanged: function (selectedRows, currRow) {
 					sa.post('/local/link/facility/save', {
-						userId: this.p.userId,
+						userId: this.temp.userId,
 						facilityId: currRow.facilityId
 					}, function (res) {
 						// this.f5();
@@ -122,7 +121,7 @@
 				},
 				selectAll: function (isChecked) {
 					sa.post('/local/link/facility/saveAll', {
-						userId: this.p.userId,
+						userId: this.temp.userId,
 						isChecked: isChecked
 					}, function (res) {
 						this.f5();
@@ -154,18 +153,7 @@
 				}
 			},
 			created: function () {
-				let temp = {};
-				try {
-					window.location.search.replace('?', '').split('&').forEach(obj => {
-						let item = obj.split('=');
-						if (item.length == 2) {
-							temp[item[0]] = item[1];
-						}
-					})
-				} catch (e) {
-
-				}
-				this.p.userId = temp.userId;
+				sa.getParamsFromUrl(this);
 				this.f5()
 				sa.onInputEnter(); // 监听输入框的回车事件，执行查询  
 			}

@@ -53,8 +53,6 @@
 		new Vue({
 			el: '.vue-box',
 			data: {
-				param: {},
-				detailType: 'add', // add edit info
 				disabled: false,
 				idDisabled: true,
 				m: {
@@ -71,14 +69,13 @@
 
 			methods: {
 				get: function () {
-					if (this.param.detailType === sa.CONSTANT.ADD) {
+					if (this.temp.detailType === sa.CONSTANT.ADD) {
 						this.disabled = false;
 						this.idDisabled = false;
 					} else {
-						sa.get('/local/smartChain/percentage/info/' + this.param.code, this.p, function (res) {
+						sa.get('/local/smartChain/percentage/info/' + this.temp.code, this.p, function (res) {
 							this.m = res.data;
-							console.log(res.data);
-							if (this.param.detailType === sa.CONSTANT.EDIT) {
+							if (this.temp.detailType === sa.CONSTANT.EDIT) {
 								this.disabled = false;
 								this.idDisabled = true;
 							} else {
@@ -90,8 +87,8 @@
 				},
 				// ok
 				ok: function () {
-					sa.post(this.param.url, this.m, function (res) {
-						sa.alert(this.param.detailType === sa.CONSTANT.ADD ? '添加成功' : '修改成功',
+					sa.post(this.temp.url, this.m, function (res) {
+						sa.alert(this.temp.detailType === sa.CONSTANT.ADD ? '添加成功' : '修改成功',
 							function () {
 								sa.closeCurrIframe();
 							});
@@ -101,21 +98,10 @@
 				roleChanged: function (value) {}
 			},
 			created: function () {
-				let temp = {
+				sa.getParamsFromUrl(this, {
 					detailType: sa.CONSTANT.ADD,
-					url: '/local/smartChain/percentage/save'
-				};
-				try {
-					window.location.search.replace('?', '').split('&').forEach(obj => {
-						let item = obj.split('=');
-						if (item.length == 2) {
-							temp[item[0]] = item[1];
-						}
-					})
-				} catch (e) {
-
-				}
-				this.param = temp;
+					url: '/local/serial/save'
+				});
 				this.get();
 			}
 		})

@@ -41,6 +41,22 @@ var sa = {
 		INFO: "INFO",
 	};
 
+	sa.getParamsFromUrl = function (el, temp) {
+		el.location = window.location;
+		el.url = el.location.href;
+		el.temp = temp || {};
+		try {
+			el.location.search.replace('?', '').split('&').forEach(obj => {
+				let item = obj.split('=');
+				if (item.length == 2) {
+					el.temp[item[0]] = item[1];
+				}
+			})
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
 	/** 对ajax的再封装, 这个ajax假设你的接口会返回以下格式的内容 
 		{
 			"code": 200,

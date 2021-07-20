@@ -95,7 +95,6 @@
 					order: '',
 					page: 1,
 					limit: 10,
-					userId: 0,
 				},
 				totalCount: 0,
 				dataList: []
@@ -112,7 +111,7 @@
 
 				},
 				checkRows: function () {
-					sa.get('/local/link/branch/list?userId=' + this.p.userId, null, function (res) {
+					sa.get('/local/link/branch/list?userId=' + this.temp.userId, null, function (res) {
 						let list = res.list;
 						if (!list) return;
 						if (list[0] == '0') {
@@ -130,7 +129,7 @@
 				},
 				rowSelectionChanged: function (selectedRows, currRow) {
 					sa.post('/local/link/branch/save', {
-						userId: this.p.userId,
+						userId: this.temp.userId,
 						branchId: currRow.transferBranchId
 					}, function (res) {
 						// this.f5();
@@ -138,7 +137,7 @@
 				},
 				selectAll: function (isChecked) {
 					sa.post('/local/link/branch/saveAll', {
-						userId: this.p.userId,
+						userId: this.temp.userId,
 						isChecked: isChecked
 					}, function (res) {
 						this.f5();
@@ -165,55 +164,14 @@
 						() => isReload && this.f5()
 					);
 				},
-				// 删除
-				del: function (data) {
-					let that = this;
-					sa.confirm('是否删除，此操作不可撤销', function () {
-						sa.post('/local/user/remove', [data.userId], function (res) {
-							// sa.arrayDelete(this.dataList, data);
-							sa.alert('删除成功', function (e) {
-								that.f5();
-							});
-						}.bind(this))
-					}.bind(this));
-				},
-				// 批量删除
-				deleteByIds: function () {
-					// 获取选中元素的id列表
-					let that = this;
-					let selection = this.$refs['data-table'].selection;
-					let ids = sa.getArrayField(selection, 'userId');
-					if (selection.length == 0) {
-						return sa.msg('请至少选择一条数据')
-					}
-					// 提交删除 
-					sa.confirm('是否批量删除选中数据？此操作不可撤销', function () {
-						sa.post('/local/user/remove', ids, function (res) {
-							sa.alert('删除成功', function (e) {
-								that.f5();
-							});
-						}.bind(this))
-					}.bind(this));
-				},
 				exportExcel: function () {
 
 				}
 			},
 			created: function () {
-				let temp = {};
-				try {
-					window.location.search.replace('?', '').split('&').forEach(obj => {
-						let item = obj.split('=');
-						if (item.length == 2) {
-							temp[item[0]] = item[1];
-						}
-					})
-				} catch (e) {
-
-				}
-				this.p.userId = temp.userId;
-				this.f5()
-				sa.onInputEnter(); // 监听输入框的回车事件，执行查询  
+				sa.getParamsFromUrl(this);
+				this.f5();
+				sa.onInputEnter(); // 监听输入框的回车事件，执行查询 
 			}
 		})
 	</script>

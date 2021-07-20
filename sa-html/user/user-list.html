@@ -126,7 +126,6 @@
 					}.bind(this), {});
 				},
 				f5: function () {
-					this.test();
 					sa.get('/local/user/page', this.p, function (res) {
 						this.dataList = res.page.list; // 数据  
 						this.totalCount = res.page.totalCount; // 分页  
@@ -168,21 +167,21 @@
 					);
 				},
 				facility: function (data) {
-					sa.showIframe('仓库权限', 'user-facility.html?userId=' + data.userId,
+					sa.showIframe('用户【' + data.name + '】仓库权限', 'user-facility.html?userId=' + data.userId,
 						'70%',
 						'80%', false,
 						() => this.f5()
 					);
 				},
 				carrier: function (data) {
-					sa.showIframe('承运商权限', 'user-carrier.html?userId=' + data.userId,
+					sa.showIframe('用户【' + data.name + '】承运商权限', 'user-carrier.html?userId=' + data.userId,
 						'70%',
 						'80%', false,
 						() => this.f5()
 					);
 				},
 				branch: function (data) {
-					sa.showIframe('分厂权限', 'user-branch.html?userId=' + data.userId,
+					sa.showIframe('用户【' + data.name + '】分厂权限', 'user-branch.html?userId=' + data.userId,
 						'70%',
 						'80%', false,
 						() => this.f5()

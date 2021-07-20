@@ -127,7 +127,6 @@
 					order: '',
 					page: 1,
 					limit: 10,
-					userId: 0,
 				},
 				shipTypeList: [],
 				carrierTypeList: [],
@@ -146,7 +145,7 @@
 
 				},
 				checkRows: function () {
-					sa.get('/local/link/carrier/list?userId=' + this.p.userId, null, function (res) {
+					sa.get('/local/link/carrier/list?userId=' + this.temp.userId, null, function (res) {
 						let list = res.list;
 						if (!list) return;
 						if (list[0] == '0') {
@@ -164,7 +163,7 @@
 				},
 				rowSelectionChanged: function (selectedRows, currRow) {
 					sa.post('/local/link/carrier/save', {
-						userId: this.p.userId,
+						userId: this.temp.userId,
 						carrierId: currRow.carrierId
 					}, function (res) {
 						// this.f5();
@@ -172,7 +171,7 @@
 				},
 				selectAll: function (isChecked) {
 					sa.post('/local/link/carrier/saveAll', {
-						userId: this.p.userId,
+						userId: this.temp.userId,
 						isChecked: isChecked
 					}, function (res) {
 						this.f5();
@@ -214,18 +213,7 @@
 				}
 			},
 			created: function () {
-				let temp = {};
-				try {
-					window.location.search.replace('?', '').split('&').forEach(obj => {
-						let item = obj.split('=');
-						if (item.length == 2) {
-							temp[item[0]] = item[1];
-						}
-					})
-				} catch (e) {
-
-				}
-				this.p.userId = temp.userId;
+				sa.getParamsFromUrl(this);
 				this.f5()
 				this.loadShipTypeList();
 				this.loadCarrierTypeList();
