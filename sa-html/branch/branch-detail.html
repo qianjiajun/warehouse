@@ -39,7 +39,7 @@
 				</div>
 				<div class="c-item br">
 					<label class="c-label">省份：</label>
-					<el-select size="mini" v-model="m.provinceId" clearable placeholder="请选择" :disabled="disabled">
+					<el-select size="mini" v-model="m.provinceId" clearable filterable placeholder="请选择" :disabled="disabled">
 						<el-option v-for="item in provinceList" :key="item.geoId" :value="item.geoId"
 							:label="item.geoName">
 						</el-option>

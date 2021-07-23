@@ -33,7 +33,7 @@
 				</div>
 				<div class="c-item">
 					<label class="c-label">用户身份：</label>
-					<el-select size="mini" v-model="p.role" clearable placeholder="请选择">
+					<el-select size="mini" v-model="p.role" clearable filterable placeholder="请选择">
 						<el-option v-for="item in roleList" :key="item.value" :value="item.label" :label="item.label">
 						</el-option>
 					</el-select>
@@ -117,11 +117,10 @@
 			methods: {
 				// 数据刷新
 				test: function () {
-					sa.get('/production/plan/sales/page', {
-						orderDate: '2021-06'
+					sa.get('/order/inventory/create', {
+						queryDate: '2021-07-22'
 					}, function (res) {
-						let list = res.page.list || [];
-						list.push(res.page.sum || {});
+						let list = res.list || [];
 						console.table(list);
 					}.bind(this), {});
 				},

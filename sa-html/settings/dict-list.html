@@ -24,7 +24,7 @@
 			<el-form>
 				<div class="c-item">
 					<label class="c-label">字典类型：</label>
-					<el-select size="mini" v-model="p.type" clearable placeholder="请选择">
+					<el-select size="mini" v-model="p.type" clearable filterable placeholder="请选择">
 						<el-option v-for="item in typeList" :key="item.type" :value="item.type" :label="item.name">
 						</el-option>
 					</el-select>

@@ -27,7 +27,7 @@
 				</div>
 				<div class="c-item">
 					<label class="c-label">字典类型：</label>
-					<el-select size="mini" v-model="m.type" clearable placeholder="请选择" :disabled="disabled" ref="type"
+					<el-select size="mini" v-model="m.type" clearable filterable placeholder="请选择" :disabled="disabled" ref="type"
 						@change="typeChange" @visible-change="(v) => visibleChange(v, 'type')">
 						<el-option v-for="item in typeList" :key="item.type" :value="item.type" :label="item.name">
 						</el-option>

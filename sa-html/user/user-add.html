@@ -37,7 +37,7 @@
 				</div>
 				<div class="c-item br">
 					<label class="c-label">身份：</label>
-					<el-select size="mini" v-model="m.roleId" @change="roleChanged" clearable placeholder="请选择">
+					<el-select size="mini" v-model="m.roleId" @change="roleChanged" clearable filterable placeholder="请选择">
 						<el-option v-for="item in roleList" :key="item.value" :value="item.value" :label="item.label">
 						</el-option>
 					</el-select>

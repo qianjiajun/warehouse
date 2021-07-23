@@ -39,16 +39,15 @@
 				</div>
 				<div class="c-item br">
 					<label class="c-label">运输类型：</label>
-					<el-select size="mini" v-model="m.shipType" @change="shipTypeChanged" clearable placeholder="请选择"
-						:disabled="disabled">
-						<el-option v-for="item in shipTypeList" :key="item.code" :value="item.code"
-							:label="item.value">
+					<el-select size="mini" v-model="m.shipType" @change="shipTypeChanged" clearable filterable
+						placeholder="请选择" :disabled="disabled">
+						<el-option v-for="item in shipTypeList" :key="item.code" :value="item.code" :label="item.value">
 						</el-option>
 					</el-select>
 				</div>
 				<div class="c-item br">
 					<label class="c-label">承运商类型：</label>
-					<el-select size="mini" v-model="m.carrierType" @change="carrierTypeChanged" clearable
+					<el-select size="mini" v-model="m.carrierType" @change="carrierTypeChanged" clearable filterable
 						placeholder="请选择" :disabled="disabled">
 						<el-option v-for="item in carrierTypeList" :key="item.code" :value="item.code"
 							:label="item.value">
