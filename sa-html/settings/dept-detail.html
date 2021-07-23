@@ -44,7 +44,7 @@
 				</div>
 				<div class="c-item">
 					<label class="c-label">组织类型：</label>
-					<el-select size="mini" v-model="m.type" clearable placeholder="请选择" :disabled="disabled">
+					<el-select size="mini" v-model="m.type" clearable filterable placeholder="请选择" :disabled="disabled">
 						<el-option v-for="item in deptTypeList" :key="item.value" :value="item.value"
 							:label="item.label">
 						</el-option>

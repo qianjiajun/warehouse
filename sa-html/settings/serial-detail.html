@@ -35,7 +35,7 @@
 				</div>
 				<div class="c-item">
 					<label class="c-label">重置类型：</label>
-					<el-select size="mini" v-model="m.resetMode" clearable placeholder="请选择" :disabled="disabled">
+					<el-select size="mini" v-model="m.resetMode" clearable filterable placeholder="请选择" :disabled="disabled">
 						<el-option v-for="item in resetModeList" :key="item.code" :value="item.code"
 							:label="item.value">
 						</el-option>
