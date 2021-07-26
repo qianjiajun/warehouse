@@ -70,7 +70,7 @@ var menuList = [
 		id: '09',
 		name: '其他管理',
 		icon: 'el-icon-setting',
-		info: '对组织、流水号、智链系数、数据字典等等...',
+		info: '对组织、流水号、系统数据（智链系数、分厂滞留天数等）、数据字典等等...',
 		childList: [{
 				id: '09-01',
 				name: '数据字典',
@@ -91,7 +91,7 @@ var menuList = [
 			},
 			{
 				id: '09-04',
-				name: '智链系数',
+				name: '系统数据',
 				icon: 'el-icon-document-remove',
 				url: 'sa-html/settings/smart-list.html'
 			}

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>智链系数</title>
+	<title>系统数据</title>
 	<meta charset="utf-8">
 	<meta name="viewport"
 		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
@@ -20,7 +20,7 @@
 	<div class="vue-box" style="display: none;" :style="'display: block;'">
 		<div class="c-panel">
 			<!-- ------------- 检索参数 ------------- -->
-			<div class="c-title">智链系数</div>
+			<div class="c-title">系统数据</div>
 			<el-form>
 				<div class="c-item">
 					<label class="c-label">代码：</label>
@@ -105,7 +105,7 @@
 					// str += '<p>身份：<b>' + data.role + '</b></p>';
 					// str += '</div>';
 					// sa.alert(str);
-					this.detail('智链系数详情', data.code, sa.CONSTANT.INFO, '/local/smartChain/percentage/info/' +
+					this.detail('系统数据详情', data.code, sa.CONSTANT.INFO, '/local/smartChain/percentage/info/' +
 						data.facilityId, false);
 				},
 				// 查看 - 根据选中的
@@ -117,7 +117,7 @@
 					this.get(selection[0]);
 				},
 				edit: function (data) {
-					this.detail('编辑智链系数', data.code, sa.CONSTANT.EDIT, '/local/smartChain/percentage/update',
+					this.detail('编辑系统数据', data.code, sa.CONSTANT.EDIT, '/local/smartChain/percentage/update',
 						true);
 				},
 				detail: function (title, id, type, url, isReload) {
