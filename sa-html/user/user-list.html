@@ -67,6 +67,7 @@
 				<el-table-column label="仓库" prop="facilityNames" with="160px"></el-table-column>
 				<el-table-column label="承运商" prop="carrierNames" with="160px"></el-table-column>
 				<el-table-column label="分厂" prop="branchNames" with="160px"></el-table-column>
+				<el-table-column label="工厂" prop="factoryNames" with="160px"></el-table-column>
 				<el-table-column prop="address" label="操作">
 					<template slot-scope="s">
 						<el-button class="c-btn" type="success" icon="el-icon-view" @click="get(s.row)">详情</el-button>
@@ -78,6 +79,8 @@
 						<el-button class="c-btn" type="primary" icon="el-icon-ship" @click="carrier(s.row)">承运商
 						</el-button>
 						<el-button class="c-btn" type="warning" icon="el-icon-share" @click="branch(s.row)">分厂
+						</el-button>
+						<el-button class="c-btn" type="success" icon="el-icon-house" @click="factory(s.row)">工厂
 						</el-button>
 					</template>
 				</el-table-column>
@@ -183,6 +186,13 @@
 					sa.showIframe('用户【' + data.name + '】分厂权限', 'user-branch.html?userId=' + data.userId,
 						'70%',
 						'80%', false,
+						() => this.f5()
+					);
+				},
+				factory: function (data) {
+					sa.showIframe('用户【' + data.name + '】工厂权限', 'user-factory.html?userId=' + data.userId,
+						'50%',
+						'50%', false,
 						() => this.f5()
 					);
 				},

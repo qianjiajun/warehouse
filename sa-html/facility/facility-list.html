@@ -46,13 +46,6 @@
 					<label class="c-label">客户名称：</label>
 					<el-input size="mini" v-model="p.customerName" placeholder="模糊查询"></el-input>
 				</div>
-				<!-- <div class="c-item">
-					<label class="c-label">用户身份：</label>
-					<el-select size="mini" v-model="p.role" clearable filterable placeholder="请选择">
-						<el-option v-for="item in roleList" :key="item.value" :value="item.label" :label="item.label">
-						</el-option>
-					</el-select>
-				</div> -->
 				<div class="c-item" style="min-width: 0px;">
 					<el-button size="mini" type="primary" icon="el-icon-search" @click="f5()">查询</el-button>
 				</div>
@@ -121,7 +114,6 @@
 					page: 1,
 					limit: 10,
 				},
-				// roleList: roleList,
 				totalCount: 0,
 				dataList: []
 			},

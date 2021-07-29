@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>仓库详情</title>
+	<title>工厂详情</title>
 	<meta charset="utf-8">
 	<meta name="viewport"
 		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
@@ -22,33 +22,12 @@
 		<div class="c-panel">
 			<el-form v-if="m">
 				<div class="c-item br">
-					<label class="c-label">ID：</label>
-					<el-input size="mini" v-model="m.facilityId" :disabled="idDisabled || disabled"></el-input>
+					<label class="c-label">工厂编号：</label>
+					<el-input size="mini" v-model="m.whhCode" :disabled="idDisabled || disabled"></el-input>
 				</div>
 				<div class="c-item br">
-					<label class="c-label">仓库名称：</label>
-					<el-input size="mini" v-model="m.facilityName" :disabled="disabled"></el-input>
-				</div>
-				<div class="c-item br">
-					<label class="c-label">SAP编号：</label>
-					<el-input size="mini" v-model="m.facilityInnerCode" :disabled="disabled"></el-input>
-				</div>
-				<div class="c-item br">
-					<label class="c-label">基地代码：</label>
-					<el-input size="mini" v-model="m.facilityCode" :disabled="disabled"></el-input>
-				</div>
-				<div class="c-item br">
-					<label class="c-label">客户代码：</label>
-					<el-input size="mini" v-model="m.comCode" :disabled="disabled"></el-input>
-				</div>
-				<div class="c-item br">
-					<label class="c-label">客户名称：</label>
-					<el-input size="mini" v-model="m.comName" :disabled="disabled"></el-input>
-				</div>
-				<div class="c-item br">
-					<label class="c-label"></label>
-					<el-button size="mini" type="primary" icon="el-icon-plus" size="mini" @click="ok"
-						:disabled="disabled">确定</el-button>
+					<label class="c-label">工厂名称：</label>
+					<el-input size="mini" v-model="m.whhName" :disabled="disabled"></el-input>
 				</div>
 			</el-form>
 		</div>
@@ -60,14 +39,8 @@
 				disabled: false,
 				idDisabled: true,
 				m: {
-					facilityId: '',
-					facilityName: '',
-					facilityInnerCode: '',
-					facilityCode: '',
-					comCode: '',
-					comName: '',
-					status: '0',
-					type: '0',
+					whhCode: '',
+					whhName: '',
 				},
 			},
 
@@ -77,9 +50,8 @@
 						this.disabled = false;
 						this.idDisabled = false;
 					} else {
-						sa.get('/local/facility/info/' + this.temp.facilityId, this.p, function (res) {
+						sa.get('/local/factory/info/' + this.temp.whhCode, this.p, function (res) {
 							this.m = res.data;
-							console.log(res.data);
 							if (this.temp.detailType === sa.CONSTANT.EDIT) {
 								this.disabled = false;
 								this.idDisabled = true;
@@ -105,7 +77,7 @@
 			created: function () {
 				sa.getParamsFromUrl(this, {
 					detailType: sa.CONSTANT.ADD,
-					url: '/local/facility/save'
+					url: '/local/factory/save'
 				});
 				this.get();
 			}

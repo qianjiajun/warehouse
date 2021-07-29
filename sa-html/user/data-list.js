@@ -35,6 +35,14 @@ var roleList = [{
 		label: "财务"
 	},
 	{
+		value: 8,
+		label: "生产主管"
+	},
+	{
+		value: 9,
+		label: "娃哈哈MES"
+	},
+	{
 		value: 99,
 		label: "游客"
 	},
