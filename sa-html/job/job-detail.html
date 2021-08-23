@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>仓库详情</title>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<!-- 所有的 css & js 资源 -->
+	<link rel="stylesheet" href="../../static/kj/element-ui/theme-chalk/index.css">
+	<link rel="stylesheet" href="../../static/sa.css">
+	<script src="../../static/kj/vue.min.js"></script>
+	<script src="../../static/kj/element-ui/index.js"></script>
+	<script src="../../static/kj/jquery.min.js"></script>
+	<script src="../../static/kj/layer/layer.js"></script>
+	<script src="../../static/sa.js"></script>
+</head>
+
+<body>
+	<div class="vue-box" style="display: none;" :style="'display: block;'">
+		<!-- 参数栏 -->
+		<div class="c-panel">
+			<el-form v-if="m">
+				<div class="c-item br">
+					<label class="c-label">ID：</label>
+					<el-input size="mini" v-model="m.jobId" :disabled="idDisabled || disabled"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">实例名称：</label>
+					<el-input size="mini" v-model="m.beanName" :disabled="disabled"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">参数：</label>
+					<el-input size="mini" v-model="m.params" :disabled="disabled"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">定时规则：</label>
+					<el-input size="mini" v-model="m.cronExpression" :disabled="disabled"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">状态：</label>
+					<el-select size="mini" v-model="m.status" placeholder="请选择">
+						<el-option v-for="item in statusList" :key="item.value" :value="item.value" :label="item.label">
+						</el-option>
+					</el-select>
+				</div>
+				<div class="c-item br">
+					<label class="c-label">备注：</label>
+					<el-input size="mini" v-model="m.remark" :disabled="disabled"></el-input>
+				</div>
+				<div class="c-item br">
+					<label class="c-label"></label>
+					<el-button size="mini" type="primary" icon="el-icon-plus" size="mini" @click="ok"
+						:disabled="disabled">确定</el-button>
+				</div>
+			</el-form>
+		</div>
+	</div>
+	<script type="text/javascript">
+		new Vue({
+			el: '.vue-box',
+			data: {
+				disabled: false,
+				idDisabled: true,
+				m: {
+					jobId: '',
+					beanName: '',
+					params: '',
+					cronExpression: '',
+					status: 0,
+					remark: '',
+					createTime: null
+				},
+				statusList: [{
+						value: 0,
+						label: "运行"
+					},
+					{
+						value: 1,
+						label: "暂停"
+					}
+				]
+			},
+			methods: {
+				get: function () {
+					if (this.temp.detailType === sa.CONSTANT.ADD) {
+						this.disabled = false;
+						this.idDisabled = false;
+					} else {
+						sa.get('/sys/schedule/info/' + this.temp.jobId, this.p, function (res) {
+							this.m = res.data;
+							if (this.temp.detailType === sa.CONSTANT.EDIT) {
+								this.disabled = false;
+								this.idDisabled = true;
+							} else {
+								this.disabled = true;
+								this.idDisabled = true;
+							}
+						}.bind(this), {});
+					}
+				},
+				// ok
+				ok: function () {
+					sa.post(this.temp.url, this.m, function (res) {
+						sa.alert(this.temp.detailType === sa.CONSTANT.ADD ? '添加成功' : '修改成功',
+							function () {
+								sa.closeCurrIframe();
+							});
+					}.bind(this));
+
+				},
+				roleChanged: function (value) {}
+			},
+			created: function () {
+				sa.getParamsFromUrl(this, {
+					detailType: sa.CONSTANT.ADD,
+					url: '/sys/schedule/save'
+				});
+				this.get();
+			}
+		})
+	</script>
+</body>
+
+</html>

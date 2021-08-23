@@ -25,7 +25,7 @@ var menuList = [
 		id: '01',
 		name: '用户管理',
 		icon: 'el-icon-user',
-		info: '对用户列表、添加等等...',
+		info: '用户列表、添加等等...',
 		childList: [{
 				id: '01-01',
 				name: '用户列表',
@@ -44,25 +44,42 @@ var menuList = [
 		id: '02',
 		name: '仓库管理',
 		icon: 'el-icon-house',
-		info: '对仓库列表、添加等等...',
+		info: '仓库列表、添加等等...',
 		childList: [{
-				id: '02-01',
-				name: '仓库列表',
-				icon: 'el-icon-document-remove',
-				url: 'sa-html/facility/facility-list.html'
-			}
-		]
+			id: '02-01',
+			name: '仓库列表',
+			icon: 'el-icon-document-remove',
+			url: 'sa-html/facility/facility-list.html'
+		}]
 	},
 	{
 		id: '03',
 		name: '承运商管理',
 		icon: 'el-icon-ship',
-		info: '对承运商列表、添加等等...',
+		info: '承运商列表、添加等等...',
 		childList: [{
-				id: '03-01',
-				name: '承运商列表',
+			id: '03-01',
+			name: '承运商列表',
+			icon: 'el-icon-document-remove',
+			url: 'sa-html/carrier/carrier-list.html'
+		}]
+	},
+	{
+		id: '04',
+		name: '定时任务',
+		icon: 'el-icon-timer',
+		info: '定时任务管理、定时任务日志列表等等...',
+		childList: [{
+				id: '04-01',
+				name: '定时任务列表',
 				icon: 'el-icon-document-remove',
-				url: 'sa-html/carrier/carrier-list.html'
+				url: 'sa-html/job/job-list.html'
+			},
+			{
+				id: '04-02',
+				name: '日志列表',
+				icon: 'el-icon-document-remove',
+				url: 'sa-html/job/job-log-list.html'
 			}
 		]
 	},
@@ -103,11 +120,10 @@ var menuList = [
 		icon: 'el-icon-search',
 		info: '增删改查各种常用组件示例',
 		childList: [{
-				id: '98-01',
-				name: '在线表单构建',
-				url: 'https://mrhj.gitee.io/form-generator/#/'
-			},
-		]
+			id: '98-01',
+			name: '在线表单构建',
+			url: 'https://mrhj.gitee.io/form-generator/#/'
+		}, ]
 	},
 	//  ========= jq22搜集 ================
 	{

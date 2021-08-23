@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>仓库列表</title>
+	<title>定时任务列表</title>
 	<meta charset="utf-8">
 	<meta name="viewport"
 		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
@@ -20,31 +20,15 @@
 	<div class="vue-box" style="display: none;" :style="'display: block;'">
 		<div class="c-panel">
 			<!-- ------------- 检索参数 ------------- -->
-			<div class="c-title">仓库列表</div>
+			<div class="c-title">定时任务列表</div>
 			<el-form>
 				<div class="c-item">
-					<label class="c-label">SAP编号：</label>
-					<el-input size="mini" v-model="p.facilityInnerCode" placeholder="模糊查询"></el-input>
+					<label class="c-label">实例名称：</label>
+					<el-input size="mini" v-model="p.beanName" placeholder="模糊查询"></el-input>
 				</div>
 				<div class="c-item">
-					<label class="c-label">仓库名称：</label>
-					<el-input size="mini" v-model="p.facilityName" placeholder="模糊查询"></el-input>
-				</div>
-				<div class="c-item">
-					<label class="c-label">基地代码：</label>
-					<el-input size="mini" v-model="p.facilityCode" placeholder="模糊查询"></el-input>
-				</div>
-				<div class="c-item">
-					<label class="c-label">类型：</label>
-					<el-input size="mini" v-model="p.type" placeholder="模糊查询"></el-input>
-				</div>
-				<div class="c-item">
-					<label class="c-label">客户代码：</label>
-					<el-input size="mini" v-model="p.customerCode" placeholder="模糊查询"></el-input>
-				</div>
-				<div class="c-item">
-					<label class="c-label">客户名称：</label>
-					<el-input size="mini" v-model="p.customerName" placeholder="模糊查询"></el-input>
+					<label class="c-label">备注：</label>
+					<el-input size="mini" v-model="p.remark" placeholder="模糊查询"></el-input>
 				</div>
 				<div class="c-item" style="min-width: 0px;">
 					<el-button size="mini" type="primary" icon="el-icon-search" @click="f5()">查询</el-button>
@@ -62,26 +46,35 @@
 			<!-- ------------- 数据列表 ------------- -->
 			<el-table class="data-table" ref="data-table" :data="dataList" size="small" stripe="true">
 				<el-table-column type="selection" width="45px"></el-table-column>
-				<el-table-column label="ID" prop="facilityId" width="80px"> </el-table-column>
-				<el-table-column label="SAP编号" prop="facilityInnerCode" width="160px"></el-table-column>
-				<el-table-column label="仓库名称" prop="facilityName" with="160px"> </el-table-column>
-				<el-table-column label="基地代码" prop="facilityCode" with="120px"></el-table-column>
-				<el-table-column label="类型" prop="type" with="160px">
+				<el-table-column label="ID" prop="jobId" width="80px"> </el-table-column>
+				<el-table-column label="实例名称" prop="beanName" width="160px"></el-table-column>
+				<el-table-column label="参数" prop="params" with="160px"> </el-table-column>
+				<el-table-column label="定时规则" prop="cronExpression" with="160px">
+				</el-table-column>
+				<el-table-column label="状态" prop="status" with="160px">
 					<template slot-scope="s">
 						<div style="float: left; width: 130px; line-height: 20px;">
-							<b>{{s.row.type}}</b>
+							<el-tag :type="s.row.status == 1 ? 'warning':(s.row.status == 0 ? 'success':'danger')">
+								<b>{{s.row.status == 1 ? '暂停':(s.row.status == 0 ? '运行':'无效')}}</b></el-tag>
+							<b></b>
 						</div>
 					</template>
 				</el-table-column>
-				<el-table-column label="客户代码" prop="comCode" with="160px"></el-table-column>
-				<el-table-column label="客户名称" prop="comName" with="160px"></el-table-column>
+				<el-table-column label="备注" prop="remark" with="160px"></el-table-column>
 				<el-table-column prop="address" label="操作">
 					<template slot-scope="s">
 						<el-button class="c-btn" type="success" icon="el-icon-view" @click="get(s.row)">详情</el-button>
-						<el-button class="c-btn" type="warning" icon="el-icon-edit" @click="edit(s.row)">编辑</el-button>
-						<el-button class="c-btn" type="danger" icon="el-icon-delete" @click="del(s.row)">删除</el-button>
-						<el-button class="c-btn" type="primary" icon="el-icon-edit" @click="copy(s.row)">复制规则
-						</el-button>
+						<el-button class="c-btn" v-if="s.row.status == 1" type="warning" icon="el-icon-edit"
+							@click="edit(s.row)">编辑</el-button>
+						<el-button class="c-btn" v-if="s.row.status == 1" type="danger" icon="el-icon-delete"
+							@click="del(s.row)">删除</el-button>
+						<el-button class="c-btn" v-if="s.row.status == 0" type="warning" icon="el-icon-edit"
+							@click="pause(s.row)">暂停</el-button>
+						<el-button class="c-btn" v-if="s.row.status == 1" type="primary" icon="el-icon-edit"
+							@click="resume(s.row)">恢复</el-button>
+						<el-button class="c-btn" v-if="s.row.status == 0" type="primary" icon="el-icon-edit"
+							@click="run(s.row)">执行</el-button>
+
 					</template>
 				</el-table-column>
 			</el-table>
@@ -105,12 +98,8 @@
 			el: '.vue-box',
 			data: {
 				p: { // 查询参数 
-					facilityInnerCode: '',
-					facilityName: '',
-					facilityCode: '',
-					type: '',
-					customerCode: '',
-					customerName: '',
+					beanName: '',
+					remark: '',
 					sidx: '',
 					order: '',
 					page: 1,
@@ -122,7 +111,7 @@
 			methods: {
 				// 数据刷新
 				f5: function () {
-					sa.get('/local/facility/page', this.p, function (res) {
+					sa.get('/sys/schedule/list', this.p, function (res) {
 						this.dataList = res.page.list; // 数据  
 						this.totalCount = res.page.totalCount; // 分页  
 						sa.f5TableHeight(); // 刷新表格高度 
@@ -137,8 +126,8 @@
 					// str += '<p>身份：<b>' + data.role + '</b></p>';
 					// str += '</div>';
 					// sa.alert(str);
-					this.detail('仓库详情', data.facilityId, sa.CONSTANT.INFO, '/local/facility/info/' + data
-						.facilityId, false);
+					this.detail('定时任务详情', data.jobId, sa.CONSTANT.INFO, '/sys/schedule/info/' + data
+						.jobId, false);
 				},
 				// 查看 - 根据选中的
 				getBySelect: function (data) {
@@ -150,37 +139,55 @@
 				},
 				// 新增
 				add: function (data) {
-					this.detail('新增仓库', null, sa.CONSTANT.ADD, '/local/facility/save', true);
+					this.detail('新增定时任务', null, sa.CONSTANT.ADD, '/sys/schedule/save', true);
 					// this.sa_admin.showMenuById('01-02');
 				},
 				edit: function (data) {
-					this.detail('编辑仓库', data.facilityId, sa.CONSTANT.EDIT, '/local/facility/edit', true);
+					this.detail('编辑定时任务', data.jobId, sa.CONSTANT.EDIT, '/sys/schedule/edit', true);
+				},
+				pause: function (data) {
+					let that = this;
+					sa.confirm('是否暂停任务【' + data.beanName + '】', function () {
+						sa.post('/sys/schedule/pause', [data.jobId], function (res) {
+							sa.alert('暂停成功', function (e) {
+								that.f5();
+							});
+						}.bind(this))
+					}.bind(this));
+				},
+				resume: function (data) {
+					let that = this;
+					sa.confirm('是否恢复任务【' + data.beanName + '】', function () {
+						sa.post('/sys/schedule/resume', [data.jobId], function (res) {
+							sa.alert('恢复成功', function (e) {
+								that.f5();
+							});
+						}.bind(this))
+					}.bind(this));
+				},
+				run: function (data) {
+					let that = this;
+					sa.confirm('是否立即执行任务【' + data.beanName + '】', function () {
+						sa.post('/sys/schedule/run', [data.jobId], function (res) {
+							sa.alert('执行成功', function (e) {
+								that.f5();
+							});
+						}.bind(this))
+					}.bind(this));
 				},
 				detail: function (title, id, type, url, isReload) {
-					sa.showIframe(title, 'facility-detail.html?facilityId=' + id + '&detailType=' + type +
+					sa.showIframe(title, 'job-detail.html?jobId=' + id + '&detailType=' + type +
 						'&url=' + url,
 						'420px',
 						'500px', false,
 						() => isReload && this.f5()
 					);
 				},
-				copy: function (data) {
-					let that = this;
-					sa.confirm('是否复制排单规则', function () {
-						sa.post('/order/autoconfig/copy', {
-							facilityId: data.facilityId
-						}, function (res) {
-							sa.alert('复制成功', function (e) {
-								that.f5();
-							});
-						}.bind(this))
-					}.bind(this));
-				},
 				// 删除
 				del: function (data) {
 					let that = this;
 					sa.confirm('是否删除，此操作不可撤销', function () {
-						sa.post('/local/facility/remove', [data.facilityId], function (res) {
+						sa.post('/sys/schedule/delete', [data.jobId], function (res) {
 							sa.alert('删除成功', function (e) {
 								that.f5();
 							});
@@ -192,13 +199,13 @@
 					// 获取选中元素的id列表
 					let that = this;
 					let selection = this.$refs['data-table'].selection;
-					let ids = sa.getArrayField(selection, 'facilityId');
+					let ids = sa.getArrayField(selection, 'jobId');
 					if (selection.length == 0) {
 						return sa.msg('请至少选择一条数据')
 					}
 					// 提交删除 
 					sa.confirm('是否批量删除选中数据？此操作不可撤销', function () {
-						sa.post('/local/facility/remove', ids, function (res) {
+						sa.post('/sys/schedule/delete', ids, function (res) {
 							sa.alert('删除成功', function (e) {
 								that.f5();
 							});

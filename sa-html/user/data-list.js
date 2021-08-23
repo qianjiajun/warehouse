@@ -43,6 +43,10 @@ var roleList = [{
 		label: "娃哈哈MES"
 	},
 	{
+		value: 10,
+		label: "自营"
+	},
+	{
 		value: 99,
 		label: "游客"
 	},

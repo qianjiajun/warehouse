@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>仓库列表</title>
+	<title>定时任务列表</title>
 	<meta charset="utf-8">
 	<meta name="viewport"
 		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
@@ -20,32 +20,24 @@
 	<div class="vue-box" style="display: none;" :style="'display: block;'">
 		<div class="c-panel">
 			<!-- ------------- 检索参数 ------------- -->
-			<div class="c-title">仓库列表</div>
+			<div class="c-title">定时任务列表</div>
 			<el-form>
 				<div class="c-item">
-					<label class="c-label">SAP编号：</label>
-					<el-input size="mini" v-model="p.facilityInnerCode" placeholder="模糊查询"></el-input>
+					<label class="c-label">任务ID：</label>
+					<el-input size="mini" v-model="p.jobId" placeholder="模糊查询"></el-input>
+				</div>
+				<!-- <div class="c-item">
+					<label class="c-label">实例名称：</label>
+					<el-input size="mini" v-model="p.beanName" placeholder="模糊查询"></el-input>
 				</div>
 				<div class="c-item">
-					<label class="c-label">仓库名称：</label>
-					<el-input size="mini" v-model="p.facilityName" placeholder="模糊查询"></el-input>
+					<label class="c-label">状态：</label>
+					<el-input size="mini" v-model="p.status" placeholder="精确查询"></el-input>
 				</div>
 				<div class="c-item">
-					<label class="c-label">基地代码：</label>
-					<el-input size="mini" v-model="p.facilityCode" placeholder="模糊查询"></el-input>
-				</div>
-				<div class="c-item">
-					<label class="c-label">类型：</label>
-					<el-input size="mini" v-model="p.type" placeholder="模糊查询"></el-input>
-				</div>
-				<div class="c-item">
-					<label class="c-label">客户代码：</label>
-					<el-input size="mini" v-model="p.customerCode" placeholder="模糊查询"></el-input>
-				</div>
-				<div class="c-item">
-					<label class="c-label">客户名称：</label>
-					<el-input size="mini" v-model="p.customerName" placeholder="模糊查询"></el-input>
-				</div>
+					<label class="c-label">失败信息：</label>
+					<el-input size="mini" v-model="p.error" placeholder="模糊查询"></el-input>
+				</div> -->
 				<div class="c-item" style="min-width: 0px;">
 					<el-button size="mini" type="primary" icon="el-icon-search" @click="f5()">查询</el-button>
 				</div>
@@ -62,26 +54,24 @@
 			<!-- ------------- 数据列表 ------------- -->
 			<el-table class="data-table" ref="data-table" :data="dataList" size="small" stripe="true">
 				<el-table-column type="selection" width="45px"></el-table-column>
-				<el-table-column label="ID" prop="facilityId" width="80px"> </el-table-column>
-				<el-table-column label="SAP编号" prop="facilityInnerCode" width="160px"></el-table-column>
-				<el-table-column label="仓库名称" prop="facilityName" with="160px"> </el-table-column>
-				<el-table-column label="基地代码" prop="facilityCode" with="120px"></el-table-column>
-				<el-table-column label="类型" prop="type" with="160px">
+				<el-table-column label="ID" prop="logId" width="80px"> </el-table-column>
+				<el-table-column label="任务ID" prop="jobId" width="80px"> </el-table-column>
+				<el-table-column label="实例名称" prop="beanName" width="160px"></el-table-column>
+				<el-table-column label="参数" prop="params" with="160px"> </el-table-column>
+				<el-table-column label="执行时间" prop="createTime" with="160px"> </el-table-column>
+				<el-table-column label="状态" prop="status" with="160px">
 					<template slot-scope="s">
 						<div style="float: left; width: 130px; line-height: 20px;">
-							<b>{{s.row.type}}</b>
+							<el-tag :type="s.row.status == 0 ? 'success':'danger'">
+								<b>{{s.row.status == 0 ? '成功':'失败'}}</b></el-tag>
 						</div>
 					</template>
 				</el-table-column>
-				<el-table-column label="客户代码" prop="comCode" with="160px"></el-table-column>
-				<el-table-column label="客户名称" prop="comName" with="160px"></el-table-column>
+				<el-table-column label="失败信息" prop="error" with="300px"></el-table-column>
+				<el-table-column label="耗时/ms" prop="times" with="160px"></el-table-column>
 				<el-table-column prop="address" label="操作">
 					<template slot-scope="s">
-						<el-button class="c-btn" type="success" icon="el-icon-view" @click="get(s.row)">详情</el-button>
-						<el-button class="c-btn" type="warning" icon="el-icon-edit" @click="edit(s.row)">编辑</el-button>
-						<el-button class="c-btn" type="danger" icon="el-icon-delete" @click="del(s.row)">删除</el-button>
-						<el-button class="c-btn" type="primary" icon="el-icon-edit" @click="copy(s.row)">复制规则
-						</el-button>
+						<!-- <el-button class="c-btn" type="success" icon="el-icon-view" @click="get(s.row)">详情</el-button> -->
 					</template>
 				</el-table-column>
 			</el-table>
@@ -105,14 +95,12 @@
 			el: '.vue-box',
 			data: {
 				p: { // 查询参数 
-					facilityInnerCode: '',
-					facilityName: '',
-					facilityCode: '',
-					type: '',
-					customerCode: '',
-					customerName: '',
-					sidx: '',
-					order: '',
+					jobId: '',
+					beanName: '',
+					status: 0,
+					error: '',
+					sidx: 'create_time',
+					order: 'desc',
 					page: 1,
 					limit: 10,
 				},
@@ -122,7 +110,7 @@
 			methods: {
 				// 数据刷新
 				f5: function () {
-					sa.get('/local/facility/page', this.p, function (res) {
+					sa.get('/sys/scheduleLog/list', this.p, function (res) {
 						this.dataList = res.page.list; // 数据  
 						this.totalCount = res.page.totalCount; // 分页  
 						sa.f5TableHeight(); // 刷新表格高度 
@@ -137,50 +125,22 @@
 					// str += '<p>身份：<b>' + data.role + '</b></p>';
 					// str += '</div>';
 					// sa.alert(str);
-					this.detail('仓库详情', data.facilityId, sa.CONSTANT.INFO, '/local/facility/info/' + data
-						.facilityId, false);
-				},
-				// 查看 - 根据选中的
-				getBySelect: function (data) {
-					var selection = this.$refs['data-table'].selection;
-					if (selection.length == 0) {
-						return sa.msg('请选择一条数据')
-					}
-					this.get(selection[0]);
-				},
-				// 新增
-				add: function (data) {
-					this.detail('新增仓库', null, sa.CONSTANT.ADD, '/local/facility/save', true);
-					// this.sa_admin.showMenuById('01-02');
-				},
-				edit: function (data) {
-					this.detail('编辑仓库', data.facilityId, sa.CONSTANT.EDIT, '/local/facility/edit', true);
+					this.detail('定时任务详情', data.facilityId, sa.CONSTANT.INFO, '/sys/scheduleLog/info/' + data
+						.logId, false);
 				},
 				detail: function (title, id, type, url, isReload) {
-					sa.showIframe(title, 'facility-detail.html?facilityId=' + id + '&detailType=' + type +
+					sa.showIframe(title, 'job-log-detail.html?logId=' + id + '&detailType=' + type +
 						'&url=' + url,
 						'420px',
 						'500px', false,
 						() => isReload && this.f5()
 					);
 				},
-				copy: function (data) {
-					let that = this;
-					sa.confirm('是否复制排单规则', function () {
-						sa.post('/order/autoconfig/copy', {
-							facilityId: data.facilityId
-						}, function (res) {
-							sa.alert('复制成功', function (e) {
-								that.f5();
-							});
-						}.bind(this))
-					}.bind(this));
-				},
 				// 删除
 				del: function (data) {
 					let that = this;
 					sa.confirm('是否删除，此操作不可撤销', function () {
-						sa.post('/local/facility/remove', [data.facilityId], function (res) {
+						sa.post('/sys/scheduleLog/remove', [data.facilityId], function (res) {
 							sa.alert('删除成功', function (e) {
 								that.f5();
 							});
@@ -198,7 +158,7 @@
 					}
 					// 提交删除 
 					sa.confirm('是否批量删除选中数据？此操作不可撤销', function () {
-						sa.post('/local/facility/remove', ids, function (res) {
+						sa.post('/sys/scheduleLog/remove', ids, function (res) {
 							sa.alert('删除成功', function (e) {
 								that.f5();
 							});
